@@ -8,7 +8,7 @@ node_js:
 
 before_script:
   - psql -c 'create database  waiter_shifts;' -U postgres
-  - psql -U postgres -d waiter_shifts -a -f tables.sql
+  - psql -U postgres -d waiter_shifts -a -f sql/tables.sql
 
 after_success: npm run coverage
 

@@ -6,6 +6,16 @@ module.exports = function (pool) {
         { name: 'Kayla' },
         { name: 'Shane' }
     ];
+    var weekdays = [
+        { day: 'Monday', waiters: 0 },
+        { day: 'Tuesday', waiters: 0 },
+        { day: 'Wednesday', waiters: 0 },
+        { day: 'Thursday', waiters: 0 },
+        { day: 'Friday', waiters: 0 },
+        { day: 'Saturday', waiters: 0 },
+        { day: 'Sunday', waiters: 0 }
+
+    ];
 
     async function updateWorkingDays (user, daysList) {
         var list;
@@ -15,14 +25,20 @@ module.exports = function (pool) {
             list = '';
         }
         if (list) {
-            var daysToAdd = daysList[0];
-            for (var x = 1; x < daysList.length; x++) {
-                daysToAdd += ', ' + daysList[x];
+            var daysToAdd = '';
+            for (var x = 0; x < daysList.length; x++) {
+                for (var i = 0; i < weekdays.length; i++) {
+                    if (daysList[x] === weekdays[i].day) {
+                        weekdays[i].waiters++;
+                    }
+                };
+                daysToAdd += ' ' + daysList[x];
             };
         } else {
             daysToAdd = 'none';
         }
         await pool.query('UPDATE waiter SET days_working = $1 WHERE waiter_name = $2', [daysToAdd, user]);
+        await buildShiftsTable();
     };
 
     async function buildWaiterTable () {
@@ -32,8 +48,16 @@ module.exports = function (pool) {
         };
     };
 
+    async function buildShiftsTable () {
+        await pool.query('DELETE FROM shifts');
+        for (var x = 0; x < weekdays.length; x++) {
+            await pool.query('INSERT into shifts (id, weekday, waiters_on_day) values ($1, $2, $3)', [x + 1, weekdays[x].day, weekdays[x].waiters]);
+        };
+    }
+
     return {
         updateWorkingDays,
-        buildWaiterTable
+        buildWaiterTable,
+        buildShiftsTable
     };
 };

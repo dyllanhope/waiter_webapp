@@ -28,7 +28,7 @@ module.exports = function (pool) {
     async function buildWaiterTable () {
         await pool.query('DELETE FROM waiter');
         for (var x = 0; x < waiterData.length; x++) {
-            await pool.query('INSERT into waiter (waiter_name, days_working) values ($1, $2)', [waiterData[x].name, 'none']);
+            await pool.query('INSERT into waiter (id, waiter_name, days_working) values ($1, $2, $3)', [x + 1, waiterData[x].name, 'none']);
         };
     };
 

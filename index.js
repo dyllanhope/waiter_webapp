@@ -4,23 +4,26 @@ const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const flash = require('express-flash');
 const session = require('express-session');
+const WaiterManager = require('../waiter_webapp/waiter-manager');
 
 const app = express();
 
-// const pg = require('pg');
-// const Pool = pg.Pool;
+const pg = require('pg');
+const Pool = pg.Pool;
 
-// let useSSL = false;
-// let local = process.env.LOCAL || false;
-// if (process.env.DATABASE_URL && !local) {
-//     useSSL = true;
-// }
-// // which db connection to use
-// // const connectionString = process.env.DATABASE_URL || 'postgresql://coder:pg123@localhost:5432/registration_nums';
-// // const pool = new Pool({
-// //     connectionString,
-// //     ssl: useSSL
-// // });
+let useSSL = false;
+let local = process.env.LOCAL || false;
+if (process.env.DATABASE_URL && !local) {
+    useSSL = true;
+}
+
+const connectionString = process.env.DATABASE_URL || 'postgresql://coder:pg123@localhost:5432/waiter_shifts';
+const pool = new Pool({
+    connectionString,
+    ssl: useSSL
+});
+
+const waiterManager = WaiterManager(pool);
 
 app.use(session({
     secret: 'yikes',
@@ -45,7 +48,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
-    res.send('Waiter Web app :)');
+    res.render('index');
+});
+
+app.post('/waiters', function (req, res) {
+    console.log(req.body.chkDay);
+    res.redirect('/');
 });
 
 const PORT = process.env.PORT || 3014;

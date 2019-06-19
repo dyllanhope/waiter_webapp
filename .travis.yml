@@ -1,4 +1,18 @@
 language: node_js
 
+env:
+  - DATABASE_URL=postgresql://postgres@localhost:5432/waiter_shifts
+
 node_js:
   - "v9.11.2"
+
+before_script:
+  - psql -c 'create database  waiter_shifts;' -U postgres
+  - psql -U postgres -d waiter_shifts -a -f tables.sql
+
+after_success: npm run coverage
+
+addons:
+    apt:
+    packages:
+    - postgresql-server-dev-9.2

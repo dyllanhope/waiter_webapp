@@ -1,0 +1,15 @@
+body {
+    background-color: grey;
+}
+.enough{
+    background-color: green;
+    color: white;
+}
+.over{
+    background-color: orange;
+    color: white;
+}
+.under{
+    background-color: red;
+    color: white;
+}

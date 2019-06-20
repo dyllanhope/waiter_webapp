@@ -35,35 +35,40 @@ describe('Testing waiter shifts manager', function () {
                 { 'waiter_name': 'Sam' },
                 { 'waiter_name': 'Mark' },
                 { 'waiter_name': 'Kayla' },
-                { 'waiter_name': 'Shane' }
+                { 'waiter_name': 'Shane' },
+                { 'waiter_name': 'Amy' },
+                { 'waiter_name': 'Chris' }
             ]);
         });
     });
     describe('Testing shifts table building', function () {
-        it('Should return list of weekdays and 1 waiter working on Monday, Tuesday and Sunday', async function () {
+        it('Should return list of weekdays and 1 waiter working on Monday, Wednesday and Sunday', async function () {
             let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Sunday']);
-            let result = await pool.query('SELECT weekday, waiters_on_day FROM shifts;');
+            let result = await pool.query('SELECT * FROM waiter');
+            result = await pool.query('SELECT weekday, waiters_on_day FROM shifts;');
             assert.strict.deepEqual(result.rows, [
-                { 'weekday': 'Monday', 'waiters_on_day': 1 },
-                { 'weekday': 'Tuesday', 'waiters_on_day': 0 },
-                { 'weekday': 'Wednesday', 'waiters_on_day': 1 },
-                { 'weekday': 'Thursday', 'waiters_on_day': 0 },
-                { 'weekday': 'Friday', 'waiters_on_day': 0 },
-                { 'weekday': 'Saturday', 'waiters_on_day': 0 },
-                { 'weekday': 'Sunday', 'waiters_on_day': 1 }
+                { weekday: 'Monday', waiters_on_day: 1 },
+                { weekday: 'Tuesday', waiters_on_day: 0 },
+                { weekday: 'Wednesday', waiters_on_day: 1 },
+                { weekday: 'Thursday', waiters_on_day: 0 },
+                { weekday: 'Friday', waiters_on_day: 0 },
+                { weekday: 'Saturday', waiters_on_day: 0 },
+                { weekday: 'Sunday', waiters_on_day: 1 }
             ]);
         });
         it('Should return list of weekdays and 1 waiter working on Monday, Tuesday, Friday, Sunday and 2 on Wednesday', async function () {
             let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Sunday']);
-            await shiftInstance.updateWorkingDays('Dyllan', ['Tuesday', 'Wednesday', 'Friday']);
-
+            await shiftInstance.updateWorkingDays('Sam', ['Tuesday', 'Wednesday', 'Friday']);
             let result = await pool.query('SELECT weekday, waiters_on_day FROM shifts;');
+
             assert.strict.deepEqual(result.rows, [
                 { 'weekday': 'Monday', 'waiters_on_day': 1 },
                 { 'weekday': 'Tuesday', 'waiters_on_day': 1 },
@@ -72,6 +77,83 @@ describe('Testing waiter shifts manager', function () {
                 { 'weekday': 'Friday', 'waiters_on_day': 1 },
                 { 'weekday': 'Saturday', 'waiters_on_day': 0 },
                 { 'weekday': 'Sunday', 'waiters_on_day': 1 }
+            ]);
+        });
+        it('Should return list of weekdays and 0 waiters working after a waiter chose 3 days then updated to working none', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Sunday']);
+            await shiftInstance.updateWorkingDays('Dyllan', []);
+            let result = await pool.query('SELECT weekday, waiters_on_day FROM shifts;');
+
+            assert.strict.deepEqual(result.rows, [
+                { 'weekday': 'Monday', 'waiters_on_day': 0 },
+                { 'weekday': 'Tuesday', 'waiters_on_day': 0 },
+                { 'weekday': 'Wednesday', 'waiters_on_day': 0 },
+                { 'weekday': 'Thursday', 'waiters_on_day': 0 },
+                { 'weekday': 'Friday', 'waiters_on_day': 0 },
+                { 'weekday': 'Saturday', 'waiters_on_day': 0 },
+                { 'weekday': 'Sunday', 'waiters_on_day': 0 }
+            ]);
+        });
+    });
+    describe('Styling tests', function () {
+        it('Should return all the days having "under" as their styling with 1 waiter working on all days', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            assert.strict.deepEqual(shiftInstance.returnWeekdayObject(), [
+                { day: 'Monday', waiters: 0, style: 'under' },
+                { day: 'Tuesday', waiters: 0, style: 'under' },
+                { day: 'Wednesday', waiters: 0, style: 'under' },
+                { day: 'Thursday', waiters: 0, style: 'under' },
+                { day: 'Friday', waiters: 0, style: 'under' },
+                { day: 'Saturday', waiters: 0, style: 'under' },
+                { day: 'Sunday', waiters: 0, style: 'under' }
+            ]);
+        });
+        it('Should return Wednesday as being "Over" as there are 4 waiters working Wednesday', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
+            await shiftInstance.updateWorkingDays('Kayla', ['Monday', 'Wednesday', 'Thursday']);
+            await shiftInstance.updateWorkingDays('Chris', ['Wednesday', 'Sunday']);
+
+            assert.strict.deepEqual(shiftInstance.returnWeekdayObject(), [
+                { day: 'Monday', waiters: 3, style: 'good' },
+                { day: 'Tuesday', waiters: 0, style: 'under' },
+                { day: 'Wednesday', waiters: 4, style: 'over' },
+                { day: 'Thursday', waiters: 1, style: 'under' },
+                { day: 'Friday', waiters: 1, style: 'under' },
+                { day: 'Saturday', waiters: 1, style: 'under' },
+                { day: 'Sunday', waiters: 1, style: 'under' }
+            ]);
+        });
+        it('Should return Monday, Wednesday and Friday as being "good" as there are the right amount of waiters working that day', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
+            await shiftInstance.updateWorkingDays('Kayla', ['Monday', 'Thursday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Chris', ['Tuesday', 'Wednesday', 'Sunday']);
+            await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+
+            assert.strict.deepEqual(shiftInstance.returnWeekdayObject(), [
+                { day: 'Monday', waiters: 3, style: 'good' },
+                { day: 'Tuesday', waiters: 2, style: 'under' },
+                { day: 'Wednesday', waiters: 3, style: 'good' },
+                { day: 'Thursday', waiters: 2, style: 'under' },
+                { day: 'Friday', waiters: 3, style: 'good' },
+                { day: 'Saturday', waiters: 2, style: 'under' },
+                { day: 'Sunday', waiters: 2, style: 'under' }
             ]);
         });
     });

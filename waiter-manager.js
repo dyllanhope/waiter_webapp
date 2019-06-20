@@ -59,6 +59,7 @@ module.exports = function (pool) {
     function clearNumWeekdaysData () {
         for (var x = 0; x < weekdays.length; x++) {
             weekdays[x].waiters = 0;
+            weekdays[x].style = 'none';
         };
     };
 
@@ -92,10 +93,22 @@ module.exports = function (pool) {
         return weekdays;
     };
 
+    async function clearShiftsTable () {
+        clearNumWeekdaysData();
+        await pool.query('DELETE FROM shifts');
+    };
+
+    async function shiftData () {
+        let result = await pool.query('SELECT weekday, waiters_on_day FROM shifts');
+        return result.rows;
+    };
+
     return {
         updateWorkingDays,
         buildWaiterTable,
         buildShiftsTable,
-        returnWeekdayObject
+        returnWeekdayObject,
+        clearShiftsTable,
+        shiftData
     };
 };

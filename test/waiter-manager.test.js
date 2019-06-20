@@ -199,8 +199,44 @@ describe('Testing waiter shifts manager', function () {
             ]);
         });
     });
+    describe('Week shift control testing', function () {
+        it('Should return a table of data for the weeks shifts', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
 
-    after(function () {
-        pool.end();
+            await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
+            await shiftInstance.updateWorkingDays('Kayla', ['Monday', 'Thursday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Chris', ['Tuesday', 'Wednesday', 'Sunday']);
+            await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+
+            let result = await shiftInstance.shiftData();
+
+            assert.strict.deepEqual(result, [
+                { weekday: 'Monday', waiters_on_day: 3 },
+                { weekday: 'Tuesday', waiters_on_day: 2 },
+                { weekday: 'Wednesday', waiters_on_day: 3 },
+                { weekday: 'Thursday', waiters_on_day: 2 },
+                { weekday: 'Friday', waiters_on_day: 3 },
+                { weekday: 'Saturday', waiters_on_day: 2 },
+                { weekday: 'Sunday', waiters_on_day: 2 }
+            ]);
+        });
+        it('Should return an empty list of shift data', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
+            await shiftInstance.clearShiftsTable();
+
+            let result = await pool.query('SELECT * FROM shifts');
+            assert.strict.deepEqual(result.rows, []);
+        });
     });
+});
+
+after(function () {
+    pool.end();
 });

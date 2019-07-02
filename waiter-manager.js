@@ -1,12 +1,12 @@
 module.exports = function (pool) {
     var waiterData = [
-        { name: 'Dyllan' },
-        { name: 'Sam' },
-        { name: 'Mark' },
-        { name: 'Kayla' },
-        { name: 'Shane' },
-        { name: 'Amy' },
-        { name: 'Chris' }
+        { name: 'Dyllan', password: '123' },
+        { name: 'Sam', password: '123' },
+        { name: 'Mark', password: '123' },
+        { name: 'Kayla', password: '123' },
+        { name: 'Shane', password: '123' },
+        { name: 'Amy', password: '123' },
+        { name: 'Chris', password: '123' }
     ];
     var weekdays = [
         { day: 'Monday', waiters: 0, style: 'under' },
@@ -18,7 +18,7 @@ module.exports = function (pool) {
         { day: 'Sunday', waiters: 0, style: 'under' }
     ];
 
-    async function updateWorkingDays (user, daysList) {
+    async function updateWorkingDays(user, daysList) {
         var list;
         if (daysList) {
             list = daysList.length;
@@ -56,28 +56,28 @@ module.exports = function (pool) {
         await buildShiftsTable();
     };
 
-    function clearNumWeekdaysData () {
+    function clearNumWeekdaysData() {
         for (var x = 0; x < weekdays.length; x++) {
             weekdays[x].waiters = 0;
-            weekdays[x].style = 'none';
+            weekdays[x].style = 'under';
         };
     };
 
-    async function buildWaiterTable () {
+    async function buildWaiterTable() {
         await pool.query('DELETE FROM waiter;');
         for (var x = 0; x < waiterData.length; x++) {
-            await pool.query('INSERT into waiter (id, waiter_name, days_working) values ($1, $2, $3);', [x + 1, waiterData[x].name, 'none']);
+            await pool.query('INSERT into waiter (id, waiter_name, days_working, password) values ($1, $2, $3, $4);', [x + 1, waiterData[x].name, 'none', waiterData[x].password]);
         };
     };
 
-    async function buildShiftsTable () {
+    async function buildShiftsTable() {
         await pool.query('DELETE FROM shifts;');
         for (var x = 0; x < weekdays.length; x++) {
             await pool.query('INSERT into shifts (id, weekday, waiters_on_day) values ($1, $2, $3);', [x + 1, weekdays[x].day, weekdays[x].waiters]);
         };
     }
 
-    function determineStyling () {
+    function determineStyling() {
         for (var i = 0; i < weekdays.length; i++) {
             if (weekdays[i].waiters === 3) {
                 weekdays[i].style = 'good';
@@ -89,18 +89,40 @@ module.exports = function (pool) {
         };
     };
 
-    function returnWeekdayObject () {
+    // async function checkLogin(name, password) {
+    //     let result = await pool.query('SELECT waiter_name, password FROM waiter WHERE waiter_name = $1', [name]);
+    //     if (result.rowCount !== 0) {
+    //         if (result.rows[0].password === password) {
+    //             return true;
+    //         } else {
+    //             return false;
+    //         };
+    //     } else {
+    //         return false;
+    //     };
+    // };
+
+    function returnWeekdayObject() {
         return weekdays;
     };
 
-    async function clearShiftsTable () {
+    async function clearShiftsTable() {
         clearNumWeekdaysData();
         await pool.query('DELETE FROM shifts');
+        let result = await pool.query('SELECT days_working FROM waiter');
+        for (var i = 0; i < result.rows.length; i++) {
+            await pool.query('UPDATE waiter SET days_working = $1 WHERE id = $2', ['none', i + 1]);
+        };
     };
 
-    async function shiftData () {
+    async function shiftData() {
         let result = await pool.query('SELECT weekday, waiters_on_day FROM shifts');
         return result.rows;
+    };
+
+    async function findWorkingDaysFor (waiter){
+        let result = await pool.query('SELECT days_working FROM waiter WHERE waiter_name = $1', [waiter]);
+        return result.rows[0].days_working;
     };
 
     return {
@@ -109,6 +131,8 @@ module.exports = function (pool) {
         buildShiftsTable,
         returnWeekdayObject,
         clearShiftsTable,
-        shiftData
+        shiftData,
+        // checkLogin,
+        findWorkingDaysFor
     };
 };

@@ -211,7 +211,7 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.updateWorkingDays('Chris', ['Tuesday', 'Wednesday', 'Sunday']);
             await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
 
-            let result = await shiftInstance.shiftData();
+            let result = await shiftInstance.shiftData(); 
 
             assert.strict.deepEqual(result, [
                 { weekday: 'Monday', waiters_on_day: 3 },
@@ -233,6 +233,24 @@ describe('Testing waiter shifts manager', function () {
 
             let result = await pool.query('SELECT * FROM shifts');
             assert.strict.deepEqual(result.rows, []);
+        });
+        it('Should return "Monday Tuesday Friday" as "Chris" has chosen those days to work', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.updateWorkingDays('Chris', ['Monday', 'Tuesday', 'Friday']);
+
+            let days = await shiftInstance.findWorkingDaysFor('Chris');
+            assert.strict.equal(days, ' Monday Tuesday Friday');
+        });
+        it('Should return "none" as "Chris" has not updated his shifts to work any days', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            let days = await shiftInstance.findWorkingDaysFor('Chris');
+            assert.strict.equal(days, 'none');
         });
     });
 });

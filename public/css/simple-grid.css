@@ -38,11 +38,12 @@ h2 {
 h3 {
   font-size: 1.375rem;
   color: black;
-  margin : 0px;
+  margin : 5px;
 }
 
 h4 {
   font-size: 1.125rem;
+  margin: 10px 0px 10px 0px;
 }
 
 h5 {

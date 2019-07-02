@@ -6,7 +6,8 @@ module.exports = function (pool) {
         { name: 'Kayla', password: '123' },
         { name: 'Shane', password: '123' },
         { name: 'Amy', password: '123' },
-        { name: 'Chris', password: '123' }
+        { name: 'Chris', password: '123' },
+        { name: 'Admin', password: 'admin' }
     ];
     var weekdays = [
         { day: 'Monday', waiters: 0, style: 'under' },
@@ -89,18 +90,18 @@ module.exports = function (pool) {
         };
     };
 
-    // async function checkLogin(name, password) {
-    //     let result = await pool.query('SELECT waiter_name, password FROM waiter WHERE waiter_name = $1', [name]);
-    //     if (result.rowCount !== 0) {
-    //         if (result.rows[0].password === password) {
-    //             return true;
-    //         } else {
-    //             return false;
-    //         };
-    //     } else {
-    //         return false;
-    //     };
-    // };
+    async function checkLogin(name, password) {
+        let result = await pool.query('SELECT waiter_name, password FROM waiter WHERE waiter_name = $1', [name]);
+        if (result.rowCount !== 0) {
+            if (result.rows[0].password === password) {
+                return true;
+            } else {
+                return false;
+            };
+        } else {
+            return false;
+        };
+    };
 
     function returnWeekdayObject() {
         return weekdays;
@@ -120,9 +121,36 @@ module.exports = function (pool) {
         return result.rows;
     };
 
-    async function findWorkingDaysFor (waiter){
+    async function findWorkingDaysFor(waiter) {
         let result = await pool.query('SELECT days_working FROM waiter WHERE waiter_name = $1', [waiter]);
         return result.rows[0].days_working;
+    };
+
+    async function findWaitersFor(day) {
+        let names = [];
+        let result = await pool.query('SELECT waiter_name, days_working FROM waiter');
+        for (var i = 0; i < result.rows.length; i++) {
+            let dayList = (result.rows[i].days_working).split(' ');
+            for (var k = 0; k < dayList.length; k++) {
+                if (day === dayList[k]) {
+                    names.push(result.rows[i].waiter_name);
+                };
+            };
+        };
+
+        return names;
+    };
+
+    async function notWorking() {
+        let result = await pool.query('SELECT waiter_name FROM waiter WHERE days_working = $1', ['none']);
+        let list = [];
+        for (var i = 0; i < result.rows.length; i++) {
+            if (result.rows[i].waiter_name !== 'Admin'){
+                list.push(result.rows[i].waiter_name);
+            }
+        };
+
+        return list;
     };
 
     return {
@@ -132,7 +160,9 @@ module.exports = function (pool) {
         returnWeekdayObject,
         clearShiftsTable,
         shiftData,
-        // checkLogin,
-        findWorkingDaysFor
+        checkLogin,
+        findWorkingDaysFor,
+        findWaitersFor,
+        notWorking
     };
 };

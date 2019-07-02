@@ -37,7 +37,9 @@ describe('Testing waiter shifts manager', function () {
                 { 'waiter_name': 'Kayla' },
                 { 'waiter_name': 'Shane' },
                 { 'waiter_name': 'Amy' },
-                { 'waiter_name': 'Chris' }
+                { 'waiter_name': 'Chris' },
+                { 'waiter_name': 'Admin' }
+
             ]);
         });
     });
@@ -251,6 +253,72 @@ describe('Testing waiter shifts manager', function () {
 
             let days = await shiftInstance.findWorkingDaysFor('Chris');
             assert.strict.equal(days, 'none');
+        });
+        it('Should return a list of names that have not selected shifts (Shane and Amy)', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
+            await shiftInstance.updateWorkingDays('Kayla', ['Monday', 'Thursday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Chris', ['Tuesday', 'Wednesday', 'Sunday']);
+            await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+
+            let notWorking = await shiftInstance.notWorking();
+            assert.strict.deepEqual(notWorking, ['Shane','Amy']);
+        });
+        it('Should return a list of names that are shifted for Friday', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
+            await shiftInstance.updateWorkingDays('Kayla', ['Monday', 'Thursday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Chris', ['Tuesday', 'Wednesday', 'Sunday']);
+            await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+
+            let workers = await shiftInstance.findWaitersFor('Friday');
+            assert.strict.deepEqual(workers, ['Dyllan','Kayla','Mark']);
+        });
+    });
+    describe('Login tests', function (){
+        it('should return "true" as the password is correct for the selected username', async function (){
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            let check = await shiftInstance.checkLogin('Dyllan','123');
+
+            assert.strict.equal(check, true);
+        });
+        it('should return "false" as the password is incorrect for the selected username', async function (){
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            let check = await shiftInstance.checkLogin('Dyllan','house');
+
+            assert.strict.equal(check, false);
+        });
+        it('should return "true" as the password for the admin user is "admin"', async function (){
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            let check = await shiftInstance.checkLogin('Admin','admin');
+
+            assert.strict.equal(check, true);
+        });
+        it('should return "false" as the entered user does not exist', async function (){
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            let check = await shiftInstance.checkLogin('Michael','123');
+
+            assert.strict.equal(check, false);
         });
     });
 });

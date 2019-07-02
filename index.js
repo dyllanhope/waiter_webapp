@@ -51,24 +51,72 @@ app.use(bodyParser.json());
 buildDBs();
 
 app.get('/', async function (req, res) {
+    let list = [];
     let waiters = await pool.query('SELECT waiter_name FROM waiter');
-    console.log(waiters.rows)
+    for (var x = 0; x < waiters.rows.length; x++) {
+        if (waiters.rows[x].waiter_name !== 'Admin') {
+            list.push(waiters.rows[x]);
+        };
+    };
     res.render('index', {
-        waiters: waiters.rows,
-        days: waiterManager.returnWeekdayObject() 
+        waiters: list,
+        days: waiterManager.returnWeekdayObject()
     });
 });
 
 app.get('/waiters/:username', async function (req, res) {
     let waiter = req.params.username;
-    res.render('days', {
-        days: waiterManager.returnWeekdayObject(),
-        name: waiter,
-        working : await waiterManager.findWorkingDaysFor(waiter)
+    res.render('login', {
+        days: await waiterManager.returnWeekdayObject(),
+        name: waiter
     });
 });
 
-app.post('/back', function (req,res){
+app.get('/day/:chosenDay', async function (req, res) {
+    let day = req.params.chosenDay;
+    let workers = await waiterManager.findWaitersFor(day);
+    res.render('admin', {
+        days: await waiterManager.returnWeekdayObject(),
+        workers: workers,
+        notWorking: await waiterManager.notWorking()
+    });
+});
+
+app.post('/login/:user', async function (req, res) {
+    let password = req.body.password;
+    let user = req.params.user;
+    let check = await waiterManager.checkLogin(user, password);
+
+    if (check) {
+        if (user === 'Admin') {
+            res.render('admin', {
+                days: await waiterManager.returnWeekdayObject(),
+                notWorking: await waiterManager.notWorking()
+
+            });
+        } else {
+            res.render('days', {
+                name: user,
+                days: await waiterManager.returnWeekdayObject(),
+                working: await waiterManager.findWorkingDaysFor(user)
+            });
+        }
+    } else {
+        req.flash('error', 'The password entered was incorrect');
+        res.render('login', {
+            name: user
+        });
+    };
+
+});
+
+app.get('/admin', async function (req, res) {
+    res.render('login', {
+        name: 'Admin'
+    });
+});
+
+app.post('/back', function (req, res) {
     res.redirect('/');
 });
 
@@ -84,7 +132,7 @@ app.post('/waiters/:username', async function (req, res) {
     res.redirect('/');
 });
 
-async function buildDBs(){
+async function buildDBs() {
     await waiterManager.buildWaiterTable();
     await waiterManager.buildShiftsTable();
 }

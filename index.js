@@ -72,13 +72,24 @@ app.get('/waiters/:username', async function (req, res) {
     });
 });
 
+
 app.get('/day/:chosenDay', async function (req, res) {
     let day = req.params.chosenDay;
     let workers = await waiterManager.findWaitersFor(day);
     res.render('admin', {
         days: await waiterManager.returnWeekdayObject(),
         workers: workers,
-        notWorking: await waiterManager.notWorking()
+        notWorking: await waiterManager.notWorking(),
+        day
+    });
+});
+
+app.get('/update/:worker', async function (req,res){
+    let user = req.params.worker;
+    res.render('days', {
+        name: user,
+        days: await waiterManager.returnWeekdayObject(),
+        working: await waiterManager.findWorkingDaysFor(user)
     });
 });
 

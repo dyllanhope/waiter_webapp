@@ -8,6 +8,10 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "start": "node index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dyllanhope/waiter_webapp.git"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {

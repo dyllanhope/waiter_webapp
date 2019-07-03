@@ -6,9 +6,9 @@
 <div class='row'>
     <div class='col-12 center'>
         <ul>
-        {{#each days}}
-        <li class='{{style}}'><u>{{day}}</u> <br> waiters: {{waiters}}</li>
-        {{/each}}
+            {{#each days}}
+            <li class='{{style}}'><u>{{day}}</u> <br> waiters: {{waiters}}</li>
+            {{/each}}
         </ul>
     </div>
 </div>
@@ -27,13 +27,14 @@
 <div class='row'>
     <div class='col-12 center'>
         <form action="/waiters/{{name}}" method="POST">
-            <input type="checkbox" name="chkDay" value="Monday"> Monday
-            <input type="checkbox" name="chkDay" value="Tuesday"> Tuesday
-            <input type="checkbox" name="chkDay" value="Wednesday"> Wednesday
-            <input type="checkbox" name="chkDay" value="Thursday"> Thursday 
-            <input type="checkbox" name="chkDay" value="Friday"> Friday
-            <input type="checkbox" name="chkDay" value="Saturday"> Saturday
-            <input type="checkbox" name="chkDay" value="Sunday"> Sunday <br>
+            {{#each days}}
+                {{#if (isChecked ../name day) }}
+                    <input type="checkbox" name="chkDay" value="{{day}}" checked> {{day}}
+                {{else}}
+                    <input type="checkbox" name="chkDay" value="{{day}}"> {{day}}
+                {{/if}}
+            {{/each}}
+            <br>
             <button type='submit' style='margin-top:10px' class='btnStyle'>Update</button>
         </form>
     </div>

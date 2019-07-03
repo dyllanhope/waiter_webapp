@@ -34,10 +34,23 @@ app.use(session({
 
 app.use(flash());
 
+const helpers = {
+    isChecked: function (name, day) {
+        let list = waiterManager.waiterInfo(name);
+        for (var i = 0; i < list.length; i++) {
+            if (day === list[i]) {
+                return true;
+            };
+        };
+        return false;
+    }
+};
+
 const handlebarSetup = exphbs({
     partialsDir: './views',
     viewPath: './views',
-    layoutsDir: './views/layouts'
+    layoutsDir: './views/layouts',
+    helpers
 });
 
 app.engine('handlebars', handlebarSetup);
@@ -84,12 +97,15 @@ app.get('/day/:chosenDay', async function (req, res) {
     });
 });
 
-app.get('/update/:worker', async function (req,res){
+app.get('/update/:worker', async function (req, res) {
     let user = req.params.worker;
+    let name = user.split(' ');
+        name = name[0];
+    console.log(name)
     res.render('days', {
-        name: user,
+        name: name,
         days: await waiterManager.returnWeekdayObject(),
-        working: await waiterManager.findWorkingDaysFor(user)
+        working: await waiterManager.findWorkingDaysFor(name)
     });
 });
 
@@ -139,8 +155,10 @@ app.post('/clear', async function (req, res) {
 app.post('/waiters/:username', async function (req, res) {
     let user = req.params.username;
     let days = req.body.chkDay;
+
     await waiterManager.updateWorkingDays(user, days);
     res.redirect('/');
+
 });
 
 async function buildDBs() {

@@ -1,13 +1,13 @@
 module.exports = function (pool) {
     var waiterData = [
-        { name: 'Dyllan', password: '123' },
-        { name: 'Sam', password: '123' },
-        { name: 'Mark', password: '123' },
-        { name: 'Kayla', password: '123' },
-        { name: 'Shane', password: '123' },
-        { name: 'Amy', password: '123' },
-        { name: 'Chris', password: '123' },
-        { name: 'Admin', password: 'admin' }
+        { name: 'Dyllan', password: '123', working: 'none' },
+        { name: 'Sam', password: '123', working: 'none' },
+        { name: 'Mark', password: '123', working: 'none' },
+        { name: 'Kayla', password: '123', working: 'none' },
+        { name: 'Shane', password: '123', working: 'none' },
+        { name: 'Amy', password: '123', working: 'none' },
+        { name: 'Chris', password: '123', working: 'none' },
+        { name: 'Admin', password: 'admin', working: 'none' }
     ];
     var weekdays = [
         { day: 'Monday', waiters: 0, style: 'under' },
@@ -35,6 +35,12 @@ module.exports = function (pool) {
         } else {
             daysToAdd = 'none';
         }
+
+        for (var x = 0; x < waiterData.length; x++) {
+            if(waiterData[x].name === user){
+                waiterData[x].working = daysToAdd
+            };
+        };
         await pool.query('UPDATE waiter SET days_working = $1 WHERE waiter_name = $2;', [daysToAdd, user]);
 
         let result = await pool.query('SELECT waiter_name, days_working FROM waiter;');
@@ -130,14 +136,14 @@ module.exports = function (pool) {
         let names = [];
         let result = await pool.query('SELECT waiter_name, days_working FROM waiter');
         for (var i = 0; i < result.rows.length; i++) {
-            let dayList = (result.rows[i].days_working).split(' ');
+            let dayList = (result.rows[i].days_working).trim();
+            dayList = dayList.split(' ');
             for (var k = 0; k < dayList.length; k++) {
                 if (day === dayList[k]) {
-                    names.push(result.rows[i].waiter_name);
+                    names.push(result.rows[i].waiter_name + ' ( shifts: ' + dayList.length + ')');
                 };
             };
         };
-
         return names;
     };
 
@@ -145,12 +151,22 @@ module.exports = function (pool) {
         let result = await pool.query('SELECT waiter_name FROM waiter WHERE days_working = $1', ['none']);
         let list = [];
         for (var i = 0; i < result.rows.length; i++) {
-            if (result.rows[i].waiter_name !== 'Admin'){
+            if (result.rows[i].waiter_name !== 'Admin') {
                 list.push(result.rows[i].waiter_name);
             }
         };
-
         return list;
+    };
+
+    function waiterInfo(name){
+        let data = 'none';
+        for (var x = 0; x < waiterData.length; x++) {
+            if(waiterData[x].name === name){
+                data = waiterData[x].working;
+            };
+        };
+        let arr = data.split(' ');
+        return arr;
     };
 
     return {
@@ -163,6 +179,7 @@ module.exports = function (pool) {
         checkLogin,
         findWorkingDaysFor,
         findWaitersFor,
-        notWorking
+        notWorking,
+        waiterInfo
     };
 };

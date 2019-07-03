@@ -16,25 +16,23 @@
 </div>
 <div class='row'>
     <div class='col-4 center'>
-            <ul class='center'>
-                <h3 style='float:left'>{{day}}</h3> <br> <br>
-                {{#each workers}}
-                <a href="/update/{{this}}"><li class='workers'style='float:none'>{{this}} </li></a>
-                {{/each}}
-            </ul>
+        <h3>{{day}}</h3>
+        {{#each workers}}
+        <a href="/update/{{this}}">{{this}}</a> <br>
+        {{/each}}
     </div>
     <div class='col-4 center'>
-        <form action="/">
-            <input type="submit" class="btnStyle" style='width:130px' value="Login screen">
-        </form>
         <form action="/clear" method="POST">
             <input type="submit" class="btnStyle" style='width:130px' value="Clear shifts">
+        </form>
+        <form action="/">
+            <input type="submit" class="btnStyle" style='width:130px' value="Login screen">
         </form>
     </div>
     <div class='col-4'>
         <h3>Waiters that haven't chosen shifts:</h3>
         {{#each notWorking}}
-        <li class='workers' style='float:none'>{{this}}</li>
+        <a href="/update/{{this}}">{{this}}</a> <br>
         {{/each}}
     </div>
 </div>

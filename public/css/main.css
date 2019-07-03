@@ -79,7 +79,8 @@ a:active {
     color: white;
 }
 .good{
-    background-color: rgb(0, 110, 255);
+    background-color:rgb(1, 165, 1);
+
     border-radius : 5px;
     color: white;
     list-style-type: none;
@@ -93,7 +94,7 @@ a:active {
     float: left;
 }
 .under{
-    background-color:rgb(1, 165, 1);
+    background-color: rgb(0, 110, 255);    
     border-radius : 5px;
     color: white;
     list-style-type: none;

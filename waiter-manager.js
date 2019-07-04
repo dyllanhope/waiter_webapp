@@ -18,6 +18,7 @@ module.exports = function (pool) {
         { day: 'Sunday', waiters: 0, style: 'under' }
     ];
 
+    
     async function updateWorkingDays (user, daysList) {
         var list;
         if (daysList) {

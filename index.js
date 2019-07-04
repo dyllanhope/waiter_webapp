@@ -80,7 +80,7 @@ app.get('/', async function (req, res) {
 app.get('/waiters/:username', async function (req, res) {
     let waiter = req.params.username;
     res.render('login', {
-        days: await waiterManager.returnWeekdayObject(),
+        days: await waiterManager.returnWeekdayObject(), 
         name: waiter
     });
 });

@@ -112,8 +112,15 @@ module.exports = function (pool) {
         return weekdays;
     };
 
+    function clearWaiterData(){
+        for (var x = 0; x < waiterData.length; x++) {
+            waiterData[x].working = 'none';
+        };
+    }
+
     async function clearShiftsTable() {
         clearNumWeekdaysData();
+        clearWaiterData();
         await pool.query('DELETE FROM shifts');
         let result = await pool.query('SELECT days_working FROM waiter');
         for (var i = 0; i < result.rows.length; i++) {

@@ -37,7 +37,7 @@ module.exports = function (pool) {
         }
 
         for (var x = 0; x < waiterData.length; x++) {
-            if(waiterData[x].name === user){
+            if (waiterData[x].name === user) {
                 waiterData[x].working = daysToAdd
             };
         };
@@ -158,14 +158,19 @@ module.exports = function (pool) {
         return list;
     };
 
-    function waiterInfo(name){
+    function waiterInfo(name) {
         let data = 'none';
         for (var x = 0; x < waiterData.length; x++) {
-            if(waiterData[x].name === name){
+            if (waiterData[x].name === name) {
                 data = waiterData[x].working;
             };
         };
         let arr = data.split(' ');
+        for (var i = 0; i < arr.length; i++) {
+            if(arr[i] === ''){
+                arr.splice(i,1);
+            };
+        };
         return arr;
     };
 

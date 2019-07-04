@@ -282,6 +282,20 @@ describe('Testing waiter shifts manager', function () {
             let workers = await shiftInstance.findWaitersFor('Friday');
             assert.strict.deepEqual(workers, ['Dyllan (shifts: 3)','Kayla (shifts: 3)','Mark (shifts: 5)']);
         });
+        it('Should return the days that Dyllan is working (Monday, Wednesday and Friday)', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
+            await shiftInstance.updateWorkingDays('Kayla', ['Monday', 'Thursday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Chris', ['Tuesday', 'Wednesday', 'Sunday']);
+            await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+
+            let workers = await shiftInstance.waiterInfo('Dyllan');
+            assert.strict.deepEqual(workers, ['Monday', 'Wednesday', 'Friday']);
+        });
     });
     describe('Login tests', function (){
         it('should return "true" as the password is correct for the selected username', async function (){

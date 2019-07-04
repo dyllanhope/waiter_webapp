@@ -7,5 +7,6 @@ create table shifts(
 create table waiter(
     id serial not null primary key,
     waiter_name text not null,
-    days_working text
+    days_working text,
+    password text
 );

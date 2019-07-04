@@ -1,0 +1,41 @@
+<div class='row'>
+    <div class='col-12 center'>
+        <h1>Waiter Shifts ({{name}})</h1>
+    </div>
+</div>
+<div class='row'>
+    <div class='col-12 center'>
+        <ul>
+            {{#each days}}
+            <li class='{{style}}'><u>{{day}}</u> <br> waiters: {{waiters}}</li>
+            {{/each}}
+        </ul>
+    </div>
+</div>
+<div class='row'>
+    <div class='col-12 center'>
+        <h3>You are currently working on the following days: <br> {{working}}</h3>
+    </div>
+</div>
+<div class='row'>
+    <div class='col-12 center'>
+        <form action="/back" method="POST">
+            <input type="submit" class='btnStyle' value="Back">
+        </form>
+    </div>
+</div>
+<div class='row'>
+    <div class='col-12 center'>
+        <form action="/waiters/{{name}}" method="POST">
+            {{#each days}}
+                {{#if (isChecked ../name day) }}
+                    <input type="checkbox" name="chkDay" value="{{day}}" checked> {{day}}
+                {{else}}
+                    <input type="checkbox" name="chkDay" value="{{day}}"> {{day}}
+                {{/if}}
+            {{/each}}
+            <br>
+            <button type='submit' style='margin-top:10px' class='btnStyle'>Update</button>
+        </form>
+    </div>
+</div>

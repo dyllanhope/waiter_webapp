@@ -1,0 +1,41 @@
+<div class='row'>
+    <div class='col-12 center'>
+        <h1>Waiter Data</h1>
+    </div>
+</div>
+<div class='row'>
+    <div class='col-12 center'>
+        <ul>
+            {{#each days}}
+            <a href="/day/{{day}}">
+                <li class='{{style}}'><u>{{day}}</u> <br> waiters: {{waiters}}</li>
+            </a>
+            {{/each}}
+        </ul>
+    </div>
+</div>
+<div class='row'>
+    <div class='col-4 center'>
+        <h3>{{day}}</h3>
+        {{#each workers}}
+            <form action="/deleteWaiter/{{this}}-{{../day}}" method='POST'>
+            <a href="/update/{{this}}">{{this}}</a> 
+            <input class='deleteBtn' type="submit" value=" - "> <br> <br>
+        </form>
+        {{/each}}
+    </div>
+    <div class='col-4 center'>
+        <form action="/clear" method="POST">
+            <input type="submit" class="btnStyle" style='width:130px' value="Clear shifts">
+        </form>
+        <form action="/">
+            <input type="submit" class="btnStyle" style='width:130px' value="Login screen">
+        </form>
+    </div>
+    <div class='col-4'>
+        <h3>Waiters that haven't chosen shifts:</h3>
+        {{#each notWorking}}
+        <a href="/update/{{this}}">{{this}}</a> <br>
+        {{/each}}
+    </div>
+</div>

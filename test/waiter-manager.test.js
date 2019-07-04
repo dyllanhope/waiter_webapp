@@ -201,7 +201,7 @@ describe('Testing waiter shifts manager', function () {
             ]);
         });
     });
-    describe('Week shift control testing', function () {
+    describe('Week shift control testing (admin controls)', function () {
         it('Should return a table of data for the weeks shifts', async function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
@@ -295,6 +295,41 @@ describe('Testing waiter shifts manager', function () {
 
             let workers = await shiftInstance.waiterInfo('Dyllan');
             assert.strict.deepEqual(workers, ['Monday', 'Wednesday', 'Friday']);
+        });
+        it('Should return a list of days Dyllan is working but the chosen day should be removed (Wednesday)', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
+            await shiftInstance.updateWorkingDays('Kayla', ['Monday', 'Thursday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Chris', ['Tuesday', 'Wednesday', 'Sunday']);
+            await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+
+            await shiftInstance.removeWaiterFrom('Dyllan','Wednesday');
+            let workers = await shiftInstance.waiterInfo('Dyllan');
+            assert.strict.deepEqual(workers, ['Monday', 'Friday']);
+        });
+        it('Should return a list of days Dyllan and Mark are working but the chosen days should be removed (Wednesday + Friday)', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
+            await shiftInstance.updateWorkingDays('Kayla', ['Monday', 'Thursday', 'Friday']);
+            await shiftInstance.updateWorkingDays('Chris', ['Tuesday', 'Wednesday', 'Sunday']);
+            await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+
+            await shiftInstance.removeWaiterFrom('Dyllan','Wednesday');
+            await shiftInstance.removeWaiterFrom('Mark', 'Friday');
+
+            let workers = await shiftInstance.waiterInfo('Dyllan');
+            assert.strict.deepEqual(workers, ['Monday', 'Friday']);
+
+            workers = await shiftInstance.waiterInfo('Mark');
+            assert.strict.deepEqual(workers, ['Tuesday', 'Thursday', 'Saturday', 'Sunday']);
         });
     });
     describe('Login tests', function (){

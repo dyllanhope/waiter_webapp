@@ -140,7 +140,7 @@ module.exports = function (pool) {
             dayList = dayList.split(' ');
             for (var k = 0; k < dayList.length; k++) {
                 if (day === dayList[k]) {
-                    names.push(result.rows[i].waiter_name + ' ( shifts: ' + dayList.length + ')');
+                    names.push(result.rows[i].waiter_name + ' (shifts: ' + dayList.length + ')');
                 };
             };
         };

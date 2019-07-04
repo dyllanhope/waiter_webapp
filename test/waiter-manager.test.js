@@ -280,7 +280,7 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
 
             let workers = await shiftInstance.findWaitersFor('Friday');
-            assert.strict.deepEqual(workers, ['Dyllan','Kayla','Mark']);
+            assert.strict.deepEqual(workers, ['Dyllan (shifts: 3)','Kayla (shifts: 3)','Mark (shifts: 5)']);
         });
     });
     describe('Login tests', function (){

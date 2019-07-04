@@ -26,7 +26,6 @@ module.exports = function (pool) {
         } else {
             list = '';
         }
-
         if (list) {
             var daysToAdd = '';
             for (var x = 0; x < daysList.length; x++) {

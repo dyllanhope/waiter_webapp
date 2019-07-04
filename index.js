@@ -176,11 +176,15 @@ app.post('/clear', async function (req, res) {
 
 app.post('/waiters/:username', async function (req, res) {
     let user = req.params.username;
-    let days = req.body.chkDay;
-
+    let days = [];
+    let type = typeof req.body.chkDay;
+    if (type === 'string'){
+        days.push(req.body.chkDay);
+    } else {
+        days = req.body.chkDay;
+    };
     await waiterManager.updateWorkingDays(user, days);
     res.redirect('/');
-
 });
 
 async function buildDBs() {

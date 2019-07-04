@@ -18,7 +18,10 @@
     <div class='col-4 center'>
         <h3>{{day}}</h3>
         {{#each workers}}
-        <a href="/update/{{this}}">{{this}}</a> <br>
+            <form action="/deleteWaiter/{{this}}-{{../day}}" method='POST'>
+            <a href="/update/{{this}}">{{this}}</a> 
+            <input class='deleteBtn' type="submit" value=" - "> <br> <br>
+        </form>
         {{/each}}
     </div>
     <div class='col-4 center'>

@@ -101,11 +101,34 @@ app.get('/update/:worker', async function (req, res) {
     let user = req.params.worker;
     let name = user.split(' ');
         name = name[0];
-    console.log(name)
     res.render('days', {
         name: name,
         days: await waiterManager.returnWeekdayObject(),
         working: await waiterManager.findWorkingDaysFor(name)
+    });
+});
+
+app.post('/deleteWaiter/:waiter', async function (req,res){
+    let waiter = req.params.waiter;
+    let data = waiter.split('-');
+    let day = data[1];
+    waiter = data[0].split(' ');
+    waiter = waiter[0];
+
+    await waiterManager.removeWaiterFrom(waiter, day);
+    let check = await pool.query("SELECT * FROM shifts");
+    let result = await pool.query("SELECT * FROM waiter");
+
+    console.log(check);
+    console.log(result);
+
+
+    let workers = await waiterManager.findWaitersFor(day);    
+    res.render('admin', {
+        days: await waiterManager.returnWeekdayObject(),
+        workers: workers,
+        notWorking: await waiterManager.notWorking(),
+        day
     });
 });
 
@@ -119,7 +142,6 @@ app.post('/login/:user', async function (req, res) {
             res.render('admin', {
                 days: await waiterManager.returnWeekdayObject(),
                 notWorking: await waiterManager.notWorking()
-
             });
         } else {
             res.render('days', {

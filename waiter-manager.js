@@ -167,11 +167,46 @@ module.exports = function (pool) {
         };
         let arr = data.split(' ');
         for (var i = 0; i < arr.length; i++) {
-            if(arr[i] === ''){
-                arr.splice(i,1);
+            if (arr[i] === '') {
+                arr.splice(i, 1);
             };
         };
         return arr;
+    };
+
+    async function removeWaiterFrom(waiter, day) {
+        let result = await pool.query('SELECT waiter_name, days_working FROM waiter WHERE waiter_name = $1', [waiter]);
+        let days = result.rows[0].days_working;
+        days = days.split(' ');
+        for (var z = 0; z < days.length; z++) {
+            if (days[z] === '') {
+                days.splice(z, 1);
+            };
+        };
+        for (var x = 0; x < days.length; x++) {
+            if (day === days[x]) {
+                days.splice(x, 1);
+            };
+        };
+        let newWorking = '';
+        for (var i = 0; i < days.length; i++) {
+            newWorking += " " + days[i];
+        };
+        let dayNum = await pool.query('SELECT waiters_on_day FROM shifts WHERE weekday = $1', [day]);
+        let number = dayNum.rows[0].waiters_on_day;
+        for (var k = 0; k < weekdays.length; k++) {
+            if(weekdays[k].day === day){
+                weekdays[k].waiters = number - 1;
+            };
+        };
+        for (var y = 0; y < waiterData.length; y++) {
+            if(waiterData[y].name === waiter){
+                waiterData[y].working = newWorking;
+            };
+        };
+        determineStyling();
+        await pool.query('UPDATE shifts SET waiters_on_day = $1 WHERE weekday = $2', [number - 1, day]);
+        await pool.query('UPDATE waiter SET days_working = $1 WHERE waiter_name = $2', [newWorking, waiter]);
     };
 
     return {
@@ -185,6 +220,7 @@ module.exports = function (pool) {
         findWorkingDaysFor,
         findWaitersFor,
         notWorking,
-        waiterInfo
+        waiterInfo,
+        removeWaiterFrom
     };
 };

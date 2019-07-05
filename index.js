@@ -104,8 +104,7 @@ app.get('/update/:worker', async function (req, res) {
     name = name[0];
     res.render('days', {
         name: name,
-        days: await waiterManager.returnWeekdayObject(),
-        working: await waiterManager.findWorkingDaysFor(name)
+        days: await waiterManager.returnWeekdayObject()
     });
 });
 

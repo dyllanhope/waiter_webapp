@@ -14,11 +14,6 @@
 </div>
 <div class='row'>
     <div class='col-12 center'>
-        <h3>You are currently working on the following days: <br> {{working}}</h3>
-    </div>
-</div>
-<div class='row'>
-    <div class='col-12 center'>
         <form action="/back" method="POST">
             <input type="submit" class='btnStyle' value="Back">
         </form>
@@ -27,11 +22,12 @@
 <div class='row'>
     <div class='col-12 center'>
         <form action="/waiters/{{name}}" method="POST">
+            <h3>Select the days you want to work: </h3>
             {{#each days}}
                 {{#if (isChecked ../name day) }}
-                    <input type="checkbox" name="chkDay" value="{{day}}" checked> {{day}}
+                    <input type="checkbox" name="chkDay" id='{{day}}' value="{{day}}" checked><label for="{{day}}">{{day}}</label>
                 {{else}}
-                    <input type="checkbox" name="chkDay" value="{{day}}"> {{day}}
+                    <input type="checkbox" name="chkDay" id='{{day}}' value="{{day}}"><label for="{{day}}">{{day}}</label>
                 {{/if}}
             {{/each}}
             <br>

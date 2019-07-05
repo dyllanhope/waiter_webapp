@@ -18,6 +18,7 @@ module.exports = function (pool) {
         { day: 'Saturday', waiters: 0, style: 'under' },
         { day: 'Sunday', waiters: 0, style: 'under' }
     ];
+    var adminMode = false;
 
     async function updateWorkingDays(user, daysList) {
         var list;
@@ -215,6 +216,14 @@ module.exports = function (pool) {
         await pool.query('UPDATE waiter SET days_working = $1 WHERE waiter_name = $2', [newWorking, waiter]);
     };
 
+    function setAdminMode (state) {
+        adminMode = state;
+    };
+
+    function returnAdminMode (){
+        return adminMode;
+    };
+
     return {
         updateWorkingDays,
         buildWaiterTable,
@@ -227,6 +236,8 @@ module.exports = function (pool) {
         findWaitersFor,
         notWorking,
         waiterInfo,
-        removeWaiterFrom
+        removeWaiterFrom,
+        setAdminMode,
+        returnAdminMode
     };
 };

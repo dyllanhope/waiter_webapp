@@ -370,6 +370,18 @@ describe('Testing waiter shifts manager', function () {
             assert.strict.equal(check, false);
         });
     });
+    describe('Admin mode testing', function () {
+        it('Should return True after being updated to true', function () {
+            let shiftInstance = WaiterManager(pool);
+            shiftInstance.setAdminMode(true);
+            assert.strict.equal(shiftInstance.returnAdminMode(), true);
+        });
+        it('Should return False after being updated to false', function () {
+            let shiftInstance = WaiterManager(pool);
+            shiftInstance.setAdminMode(false);
+            assert.strict.equal(shiftInstance.returnAdminMode(), false);
+        });
+    });
 });
 
 after(function () {

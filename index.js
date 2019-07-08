@@ -146,10 +146,10 @@ app.post('/login/:user', async function (req, res) {
 
 app.get('/admin', async function (req, res) {
     let workers = await waiterManager.findWaitersFor();
-
+    let notWorking = await waiterManager.notWorking();
     res.render('admin', {
         days: await waiterManager.returnWeekdayObject(),
-        notWorking: await waiterManager.notWorking(),
+        notWorking,
         workers
     });
 });

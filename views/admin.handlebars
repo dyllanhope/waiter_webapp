@@ -19,10 +19,10 @@
                 <td>
                     {{#each waiters}}
                     <form action="/deleteWaiter/{{this}}-{{../day}}" method='POST'>
-                        <span style="float: right">{{this}}
+                        <span style="float: right"> <a href="/update/{{this}}">{{this}}
                             <input class='deleteBtn' type="submit" value=" - "
                                 onclick="return confirm('Are you sure you want to remove them from this day?')">
-                        </span> <br>
+                       </a> </span> <br>
                     </form>
                     {{/each}}
                 </td>

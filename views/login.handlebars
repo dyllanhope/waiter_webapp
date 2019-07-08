@@ -1,11 +1,12 @@
 <div class='row'>
     <div class='col-12 center'>
-        <h1>Login for {{name}}</h1>
+        <h1>Login</h1> 
     </div>
 </div>
 <div class='row'>
     <div class='col-12 center'>
-        <form action="/login/{{name}}" method="POST">
+        <form action="/login" method="POST">
+            <input type="text" name='username' placeholder="username"> <br> <br>
             <input type="text" name='password' placeholder="password"> <br>
             <label for="whoever" style="color:crimson">{{messages.error}}</label> <br>
             <input type="submit" class='btnStyle' value='login'>     

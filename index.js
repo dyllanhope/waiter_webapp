@@ -64,18 +64,7 @@ app.use(bodyParser.json());
 buildDBs();
 
 app.get('/', async function (req, res) {
-    waiterManager.setAdminMode(false);
-    let list = [];
-    let waiters = await pool.query('SELECT waiter_name FROM waiter');
-    for (var x = 0; x < waiters.rows.length; x++) {
-        if (waiters.rows[x].waiter_name !== 'Admin') {
-            list.push(waiters.rows[x]);
-        };
-    };
-    res.render('index', {
-        waiters: list,
-        days: waiterManager.returnWeekdayObject()
-    });
+    res.render('login');
 });
 
 app.get('/waiters/:username', async function (req, res) {
@@ -119,9 +108,9 @@ app.post('/deleteWaiter/:waiter', async function (req, res) {
     res.redirect('/admin');
 });
 
-app.post('/login/:user', async function (req, res) {
+app.post('/login', async function (req, res) {
     let password = req.body.password;
-    let user = req.params.user;
+    let user = req.body.username;
     let check = await waiterManager.checkLogin(user, password);
 
     if (check) {
@@ -137,7 +126,7 @@ app.post('/login/:user', async function (req, res) {
             });
         }
     } else {
-        req.flash('error', 'The password entered was incorrect');
+        req.flash('error', 'The username or password entered was incorrect');
         res.render('login', {
             name: user
         });

@@ -280,7 +280,54 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
 
             let workers = await shiftInstance.findWaitersFor('Friday');
-            assert.strict.deepEqual(workers, ['Dyllan (shifts: 3)', 'Kayla (shifts: 3)', 'Mark (shifts: 5)']);
+            assert.strict.deepEqual(workers, [
+                {
+                    day: 'Monday',
+                    waiters: [
+                        'Dyllan (3)',
+                        'Sam (3)',
+                        'Kayla (3)'
+                    ]
+                }, {
+                    day: 'Tuesday',
+                    waiters: [
+                        'Chris (3)',
+                        'Mark (5)'
+                    ]
+                }, {
+                    day: 'Wednesday',
+                    waiters: [
+                        'Dyllan (3)',
+                        'Sam (3)',
+                        'Chris (3)'
+                    ]
+                }, {
+                    day: 'Thursday',
+                    waiters: [
+                        'Kayla (3)',
+                        'Mark (5)'
+                    ]
+                }, {
+                    day: 'Friday',
+                    waiters: [
+                        'Dyllan (3)',
+                        'Kayla (3)',
+                        'Mark (5)'
+                    ]
+                }, {
+                    day: 'Saturday',
+                    waiters: [
+                        'Sam (3)',
+                        'Mark (5)'
+                    ]
+                }, {
+                    day: 'Sunday',
+                    waiters: [
+                        'Chris (3)',
+                        'Mark (5)'
+                    ]
+                }
+            ]);
         });
         it('Should return the days that Dyllan is working (Monday, Wednesday and Friday)', async function () {
             let shiftInstance = WaiterManager(pool);

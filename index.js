@@ -86,7 +86,6 @@ app.get('/waiters/:username', async function (req, res) {
     });
 });
 
-
 app.get('/day/:chosenDay', async function (req, res) {
     let day = req.params.chosenDay;
     let workers = await waiterManager.findWaitersFor(day);
@@ -152,7 +151,6 @@ app.post('/login/:user', async function (req, res) {
             name: user
         });
     };
-
 });
 
 app.get('/admin', async function (req, res) {
@@ -197,30 +195,13 @@ app.post('/waiters/:username', async function (req, res) {
     };
 });
 
-async function buildDBs() {
+async function buildDBs () {
     await waiterManager.buildWaiterTable();
     await waiterManager.buildShiftsTable();
 }
 
-const PORT = process.env.PORT || 3014;
+const PORT = process.env.PORT || 3015;
 
 app.listen(PORT, function () {
     console.log('app started at port: ' + PORT);
 });
-
-
-
-
-
-// app.post('/account', async function (req, res) {
-    //     let name = req.body.name;
-    //     name = name.charAt(0).toUpperCase() + (name.slice(1)).toLowerCase();    
-    //     let password = req.body.password;
-    //     if (await waiterManager.checkLogin(name, password)){
-    //         res.render('days', {
-    //             days: waiterManager.returnWeekdayObject
-    //         });
-    //     } else {
-    //         res.redirect('/');
-    //     };
-    // });

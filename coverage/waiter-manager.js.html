@@ -554,7 +554,7 @@
     ];
     var adminMode = false;
 &nbsp;
-    async function updateWorkingDays(user, daysList) {
+    async function updateWorkingDays (user, daysList) {
         var list;
         if (daysList) {
             list = daysList.length;
@@ -570,9 +570,9 @@
             daysToAdd = 'none';
         }
 &nbsp;
-        for (var x = 0; x &lt; waiterData.length; x++) {
-            if (waiterData[x].name === user) {
-                waiterData[x].working = daysToAdd
+        for (var i = 0; i &lt; waiterData.length; i++) {
+            if (waiterData[i].name === user) {
+                waiterData[i].working = daysToAdd;
             };
         };
         await pool.query('UPDATE waiter SET days_working = $1 WHERE waiter_name = $2;', [daysToAdd, user]);
@@ -597,34 +597,34 @@
         await buildShiftsTable();
     };
 &nbsp;
-    function clearNumWeekdaysData() {
+    function clearNumWeekdaysData () {
         for (var x = 0; x &lt; weekdays.length; x++) {
             weekdays[x].waiters = 0;
             weekdays[x].style = 'under';
         };
     };
 &nbsp;
-    function resetWaiterInfo(){
+    function resetWaiterInfo () {
         for (var x = 0; x &lt; waiterData.length; x++) {
             waiterData[x].working = 'none';
         };
     }
 &nbsp;
-    async function buildWaiterTable() {
+    async function buildWaiterTable () {
         await pool.query('DELETE FROM waiter;');
         for (var x = 0; x &lt; waiterData.length; x++) {
             await pool.query('INSERT into waiter (id, waiter_name, days_working, password) values ($1, $2, $3, $4);', [x + 1, waiterData[x].name, 'none', waiterData[x].password]);
         };
     };
 &nbsp;
-    async function buildShiftsTable() {
+    async function buildShiftsTable () {
         await pool.query('DELETE FROM shifts;');
         for (var x = 0; x &lt; weekdays.length; x++) {
             await pool.query('INSERT into shifts (id, weekday, waiters_on_day) values ($1, $2, $3);', [x + 1, weekdays[x].day, weekdays[x].waiters]);
         };
     }
 &nbsp;
-    function determineStyling() {
+    function determineStyling () {
         for (var i = 0; i &lt; weekdays.length; i++) {
             if (weekdays[i].waiters === 3) {
                 weekdays[i].style = 'good';
@@ -636,7 +636,7 @@
         };
     };
 &nbsp;
-    async function checkLogin(name, password) {
+    async function checkLogin (name, password) {
         let result = await pool.query('SELECT waiter_name, password FROM waiter WHERE waiter_name = $1', [name]);
         if (result.rowCount !== 0) {
             if (result.rows[0].password === password) {
@@ -649,11 +649,11 @@
         };
     };
 &nbsp;
-    function returnWeekdayObject() {
+    function returnWeekdayObject () {
         return weekdays;
     };
 &nbsp;
-    async function clearShiftsTable() {
+    async function clearShiftsTable () {
         clearNumWeekdaysData();
         resetWaiterInfo();
         await pool.query('DELETE FROM shifts');
@@ -663,17 +663,17 @@
         };
     };
 &nbsp;
-    async function shiftData() {
+    async function shiftData () {
         let result = await pool.query('SELECT weekday, waiters_on_day FROM shifts');
         return result.rows;
     };
 &nbsp;
-    async function findWorkingDaysFor(waiter) {
+    async function findWorkingDaysFor (waiter) {
         let result = await pool.query('SELECT days_working FROM waiter WHERE waiter_name = $1', [waiter]);
         return result.rows[0].days_working;
     };
 &nbsp;
-    async function findWaitersFor(day) {
+    async function findWaitersFor (day) {
         let names = [];
         let result = await pool.query('SELECT waiter_name, days_working FROM waiter');
         for (var i = 0; i &lt; result.rows.length; i++) {
@@ -688,7 +688,7 @@
         return names;
     };
 &nbsp;
-    async function notWorking() {
+    async function notWorking () {
         let result = await pool.query('SELECT waiter_name FROM waiter WHERE days_working = $1', ['none']);
         let list = [];
         for (var i = 0; i &lt; result.rows.length; i++) {
@@ -699,7 +699,7 @@
         return list;
     };
 &nbsp;
-    function waiterInfo(name) {
+    function waiterInfo (name) {
         let data = 'none';
         for (var x = 0; x &lt; waiterData.length; x++) {
             if (waiterData[x].name === name) {
@@ -715,7 +715,7 @@
         return arr;
     };
 &nbsp;
-    async function removeWaiterFrom(waiter, day) {
+    async function removeWaiterFrom (waiter, day) {
         let result = await pool.query('SELECT waiter_name, days_working FROM waiter WHERE waiter_name = $1', [waiter]);
         let days = result.rows[0].days_working;
         days = days.split(' ');
@@ -731,17 +731,17 @@
         };
         let newWorking = '';
         for (var i = 0; i &lt; days.length; i++) {
-            newWorking += " " + days[i];
+            newWorking += ' ' + days[i];
         };
         let dayNum = await pool.query('SELECT waiters_on_day FROM shifts WHERE weekday = $1', [day]);
         let number = dayNum.rows[0].waiters_on_day;
         for (var k = 0; k &lt; weekdays.length; k++) {
-            if(weekdays[k].day === day){
+            if (weekdays[k].day === day) {
                 weekdays[k].waiters = number - 1;
             };
         };
         for (var y = 0; y &lt; waiterData.length; y++) {
-            if(waiterData[y].name === waiter){
+            if (waiterData[y].name === waiter) {
                 waiterData[y].working = newWorking;
             };
         };
@@ -754,7 +754,7 @@
         adminMode = state;
     };
 &nbsp;
-    function returnAdminMode (){
+    function returnAdminMode () {
         return adminMode;
     };
 &nbsp;
@@ -781,7 +781,7 @@
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Jul 05 2019 16:33:05 GMT+0200 (SAST)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Mon Jul 08 2019 09:21:24 GMT+0200 (SAST)
 </div>
 </div>
 <script src="prettify.js"></script>

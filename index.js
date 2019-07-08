@@ -88,7 +88,7 @@ app.get('/waiters/:username', async function (req, res) {
 
 app.get('/day/:chosenDay', async function (req, res) {
     let day = req.params.chosenDay;
-    let workers = await waiterManager.findWaitersFor(day);
+    let workers = await waiterManager.findWaitersFor();
     res.render('admin', {
         days: await waiterManager.returnWeekdayObject(),
         workers: workers,
@@ -116,13 +116,7 @@ app.post('/deleteWaiter/:waiter', async function (req, res) {
 
     await waiterManager.removeWaiterFrom(waiter, day);
 
-    let workers = await waiterManager.findWaitersFor(day);
-    res.render('admin', {
-        days: await waiterManager.returnWeekdayObject(),
-        workers: workers,
-        notWorking: await waiterManager.notWorking(),
-        day
-    });
+    res.redirect('/admin');
 });
 
 app.post('/login/:user', async function (req, res) {
@@ -133,10 +127,7 @@ app.post('/login/:user', async function (req, res) {
     if (check) {
         if (user === 'Admin') {
             waiterManager.setAdminMode(true);
-            res.render('admin', {
-                days: await waiterManager.returnWeekdayObject(),
-                notWorking: await waiterManager.notWorking()
-            });
+            res.redirect('/admin');
         } else {
             waiterManager.setAdminMode(false);
             res.render('days', {
@@ -154,6 +145,16 @@ app.post('/login/:user', async function (req, res) {
 });
 
 app.get('/admin', async function (req, res) {
+    let workers = await waiterManager.findWaitersFor();
+
+    res.render('admin', {
+        days: await waiterManager.returnWeekdayObject(),
+        notWorking: await waiterManager.notWorking(),
+        workers
+    });
+});
+
+app.get('/adminLogin', async function (req, res) {
     res.render('login', {
         name: 'Admin'
     });
@@ -161,10 +162,7 @@ app.get('/admin', async function (req, res) {
 
 app.post('/back', async function (req, res) {
     if (waiterManager.returnAdminMode() === true) {
-        res.render('admin', {
-            days: await waiterManager.returnWeekdayObject(),
-            notWorking: await waiterManager.notWorking()
-        });
+        res.redirect('/admin');
     } else {
         res.redirect('/');
     };
@@ -179,6 +177,7 @@ app.post('/waiters/:username', async function (req, res) {
     let user = req.params.username;
     let days = [];
     let type = typeof req.body.chkDay;
+
     if (type === 'string') {
         days.push(req.body.chkDay);
     } else {
@@ -186,10 +185,7 @@ app.post('/waiters/:username', async function (req, res) {
     };
     await waiterManager.updateWorkingDays(user, days);
     if (waiterManager.returnAdminMode() === true) {
-        res.render('admin', {
-            days: await waiterManager.returnWeekdayObject(),
-            notWorking: await waiterManager.notWorking()
-        });
+        res.redirect('/admin');
     } else {
         res.redirect('/');
     };
@@ -200,7 +196,7 @@ async function buildDBs () {
     await waiterManager.buildShiftsTable();
 }
 
-const PORT = process.env.PORT || 3015;
+const PORT = process.env.PORT || 3016;
 
 app.listen(PORT, function () {
     console.log('app started at port: ' + PORT);

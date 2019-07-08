@@ -139,16 +139,41 @@ module.exports = function (pool) {
         return result.rows[0].days_working;
     };
 
-    async function findWaitersFor (day) {
-        let names = [];
+    async function findWaitersFor () {
+        let names = [
+            {
+                day: 'Monday',
+                waiters: []
+            }, {
+                day: 'Tuesday',
+                waiters: []
+            }, {
+                day: 'Wednesday',
+                waiters: []
+            }, {
+                day: 'Thursday',
+                waiters: []
+            }, {
+                day: 'Friday',
+                waiters: []
+            }, {
+                day: 'Saturday',
+                waiters: []
+            }, {
+                day: 'Sunday',
+                waiters: []
+            }
+        ];
         let result = await pool.query('SELECT waiter_name, days_working FROM waiter');
         for (var i = 0; i < result.rows.length; i++) {
             let dayList = (result.rows[i].days_working).trim();
             dayList = dayList.split(' ');
             for (var k = 0; k < dayList.length; k++) {
-                if (day === dayList[k]) {
-                    names.push(result.rows[i].waiter_name + ' (shifts: ' + dayList.length + ')');
-                };
+                for (var x = 0; x < names.length; x++) {
+                    if (dayList[k] === names[x].day) {
+                        names[x].waiters.push(result.rows[i].waiter_name + ' (' + dayList.length + ')');
+                    };
+                }
             };
         };
         return names;

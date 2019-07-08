@@ -5,24 +5,35 @@
 </div>
 <div class='row'>
     <div class='col-12 center'>
-        <ul>
-            {{#each days}}
-            <a href="/day/{{day}}">
-                <li class='{{style}}'><u>{{day}}</u> <br> waiters: {{waiters}}</li>
-            </a>
-            {{/each}}
-        </ul>
+        <table>
+            <tr>
+                {{#each days}}
+                <th>
+                    <h4 class='{{style}}' style="float: none; text-align: center"><u>{{day}}</u> <br> waiters:
+                        {{waiters}}</h4>
+                </th>
+                {{/each}}
+            </tr>
+            <tr>
+                {{#each workers}}
+                <td>
+                    {{#each waiters}}
+                    <form action="/deleteWaiter/{{this}}-{{../day}}" method='POST'>
+                        <span style="float: right">{{this}}
+                            <input class='deleteBtn' type="submit" value=" - "
+                                onclick="return confirm('Are you sure you want to remove them from this day?')">
+                        </span> <br>
+                    </form>
+                    {{/each}}
+                </td>
+                {{/each}}
+            </tr>
+        </table>
+        </a>
     </div>
 </div>
 <div class='row'>
     <div class='col-4 center'>
-        <h3>{{day}}</h3>
-        {{#each workers}}
-            <form action="/deleteWaiter/{{this}}-{{../day}}" method='POST'>
-            <a href="/update/{{this}}">{{this}}</a> 
-            <input class='deleteBtn' type="submit" value=" - "> <br> <br>
-        </form>
-        {{/each}}
     </div>
     <div class='col-4 center'>
         <form action="/clear" method="POST">

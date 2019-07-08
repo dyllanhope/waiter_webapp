@@ -209,6 +209,9 @@ module.exports = function (pool) {
     async function removeWaiterFrom (waiter, day) {
         let result = await pool.query('SELECT waiter_name, days_working FROM waiter WHERE waiter_name = $1', [waiter]);
         let days = result.rows[0].days_working;
+        days = days.trim();
+
+        var newWorking = '';
         days = days.split(' ');
         for (var z = 0; z < days.length; z++) {
             if (days[z] === '') {
@@ -220,9 +223,12 @@ module.exports = function (pool) {
                 days.splice(x, 1);
             };
         };
-        let newWorking = '';
         for (var i = 0; i < days.length; i++) {
             newWorking += ' ' + days[i];
+        };
+        newWorking = newWorking.trim();
+        if (newWorking === '') {
+            newWorking = 'none';
         };
         let dayNum = await pool.query('SELECT waiters_on_day FROM shifts WHERE weekday = $1', [day]);
         let number = dayNum.rows[0].waiters_on_day;

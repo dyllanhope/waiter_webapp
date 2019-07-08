@@ -213,7 +213,7 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.updateWorkingDays('Chris', ['Tuesday', 'Wednesday', 'Sunday']);
             await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
 
-            let result = await shiftInstance.shiftData(); 
+            let result = await shiftInstance.shiftData();
 
             assert.strict.deepEqual(result, [
                 { weekday: 'Monday', waiters_on_day: 3 },
@@ -266,7 +266,7 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
 
             let notWorking = await shiftInstance.notWorking();
-            assert.strict.deepEqual(notWorking, ['Shane','Amy']);
+            assert.strict.deepEqual(notWorking, ['Shane', 'Amy']);
         });
         it('Should return a list of names that are shifted for Friday', async function () {
             let shiftInstance = WaiterManager(pool);
@@ -280,7 +280,7 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
 
             let workers = await shiftInstance.findWaitersFor('Friday');
-            assert.strict.deepEqual(workers, ['Dyllan (shifts: 3)','Kayla (shifts: 3)','Mark (shifts: 5)']);
+            assert.strict.deepEqual(workers, ['Dyllan (shifts: 3)', 'Kayla (shifts: 3)', 'Mark (shifts: 5)']);
         });
         it('Should return the days that Dyllan is working (Monday, Wednesday and Friday)', async function () {
             let shiftInstance = WaiterManager(pool);
@@ -307,7 +307,7 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.updateWorkingDays('Chris', ['Tuesday', 'Wednesday', 'Sunday']);
             await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
 
-            await shiftInstance.removeWaiterFrom('Dyllan','Wednesday');
+            await shiftInstance.removeWaiterFrom('Dyllan', 'Wednesday');
             let workers = await shiftInstance.waiterInfo('Dyllan');
             assert.strict.deepEqual(workers, ['Monday', 'Friday']);
         });
@@ -322,7 +322,7 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.updateWorkingDays('Chris', ['Tuesday', 'Wednesday', 'Sunday']);
             await shiftInstance.updateWorkingDays('Mark', ['Tuesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
 
-            await shiftInstance.removeWaiterFrom('Dyllan','Wednesday');
+            await shiftInstance.removeWaiterFrom('Dyllan', 'Wednesday');
             await shiftInstance.removeWaiterFrom('Mark', 'Friday');
 
             let workers = await shiftInstance.waiterInfo('Dyllan');
@@ -332,42 +332,54 @@ describe('Testing waiter shifts manager', function () {
             assert.strict.deepEqual(workers, ['Tuesday', 'Thursday', 'Saturday', 'Sunday']);
         });
     });
-    describe('Login tests', function (){
-        it('should return "true" as the password is correct for the selected username', async function (){
+    describe('Login tests', function () {
+        it('should return "true" as the password is correct for the selected username', async function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
-            let check = await shiftInstance.checkLogin('Dyllan','123');
+            let check = await shiftInstance.checkLogin('Dyllan', '123');
 
             assert.strict.equal(check, true);
         });
-        it('should return "false" as the password is incorrect for the selected username', async function (){
+        it('should return "false" as the password is incorrect for the selected username', async function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
-            let check = await shiftInstance.checkLogin('Dyllan','house');
+            let check = await shiftInstance.checkLogin('Dyllan', 'house');
 
             assert.strict.equal(check, false);
         });
-        it('should return "true" as the password for the admin user is "admin"', async function (){
+        it('should return "true" as the password for the admin user is "admin"', async function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
-            let check = await shiftInstance.checkLogin('Admin','admin');
+            let check = await shiftInstance.checkLogin('Admin', 'admin');
 
             assert.strict.equal(check, true);
         });
-        it('should return "false" as the entered user does not exist', async function (){
+        it('should return "false" as the entered user does not exist', async function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
-            let check = await shiftInstance.checkLogin('Michael','123');
+            let check = await shiftInstance.checkLogin('Michael', '123');
 
             assert.strict.equal(check, false);
+        });
+    });
+    describe('Admin mode testing', function () {
+        it('Should return True after being updated to true', function () {
+            let shiftInstance = WaiterManager(pool);
+            shiftInstance.setAdminMode(true);
+            assert.strict.equal(shiftInstance.returnAdminMode(), true);
+        });
+        it('Should return False after being updated to false', function () {
+            let shiftInstance = WaiterManager(pool);
+            shiftInstance.setAdminMode(false);
+            assert.strict.equal(shiftInstance.returnAdminMode(), false);
         });
     });
 });

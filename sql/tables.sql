@@ -9,4 +9,4 @@ create table waiter(
     waiter_name text not null,
     days_working text,
     password text
-); 
+);

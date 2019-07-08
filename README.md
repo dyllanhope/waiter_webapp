@@ -1,6 +1,6 @@
 # Waiter shifts web application
 
-[![Build Status](https://travis-ci.org/dyllanhope/waiter_webapp.svg?branch=master)](https://travis-ci.org/dyllanhope/waiter_webapp) [![Coverage Status](https://coveralls.io/repos/github/dyllanhope/waiter_webapp/badge.svg)](https://coveralls.io/github/dyllanhope/waiter_webapp)
+[![Build Status](https://travis-ci.org/dyllanhope/waiter_webapp.svg?branch=master)](https://travis-ci.org/dyllanhope/waiter_webapp) [![Coverage Status](https://coveralls.io/repos/github/dyllanhope/waiter_webapp/badge.svg?branch=master)](https://coveralls.io/github/dyllanhope/waiter_webapp?branch=master)
 
 ## Capable of keeping track of waiter shifts
 

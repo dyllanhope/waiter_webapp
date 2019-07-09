@@ -31,13 +31,6 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.buildWaiterTable();
             let result = await pool.query('SELECT waiter_name FROM waiter;');
             assert.strict.deepEqual(result.rows, [
-                { 'waiter_name': 'Dyllan' },
-                { 'waiter_name': 'Sam' },
-                { 'waiter_name': 'Mark' },
-                { 'waiter_name': 'Kayla' },
-                { 'waiter_name': 'Shane' },
-                { 'waiter_name': 'Amy' },
-                { 'waiter_name': 'Chris' },
                 { 'waiter_name': 'Admin' }
 
             ]);
@@ -49,6 +42,7 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
+            await shiftInstance.checkLogin('Dyllan', '123');
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Sunday']);
             let result = await pool.query('SELECT * FROM waiter');
             result = await pool.query('SELECT weekday, waiters_on_day FROM shifts;');
@@ -67,6 +61,8 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
+            await shiftInstance.checkLogin('Dyllan', '123');
+            await shiftInstance.checkLogin('Sam', '123');
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Sunday']);
             await shiftInstance.updateWorkingDays('Sam', ['Tuesday', 'Wednesday', 'Friday']);
             let result = await pool.query('SELECT weekday, waiters_on_day FROM shifts;');
@@ -86,6 +82,7 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
+            await shiftInstance.checkLogin('Dyllan', '123');
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Sunday']);
             await shiftInstance.updateWorkingDays('Dyllan', []);
             let result = await pool.query('SELECT weekday, waiters_on_day FROM shifts;');
@@ -122,6 +119,11 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
+            await shiftInstance.checkLogin('Dyllan', '123');
+            await shiftInstance.checkLogin('Sam', '123');
+            await shiftInstance.checkLogin('Kayla', '123');
+            await shiftInstance.checkLogin('Chris', '123');
+
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
             await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
             await shiftInstance.updateWorkingDays('Kayla', ['Monday', 'Wednesday', 'Thursday']);
@@ -141,6 +143,12 @@ describe('Testing waiter shifts manager', function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.checkLogin('Dyllan', '123');
+            await shiftInstance.checkLogin('Sam', '123');
+            await shiftInstance.checkLogin('Kayla', '123');
+            await shiftInstance.checkLogin('Chris', '123');
+            await shiftInstance.checkLogin('Mark', '123');
 
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
             await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
@@ -164,6 +172,8 @@ describe('Testing waiter shifts manager', function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
 
+            await shiftInstance.checkLogin('Dyllan', '123');
+
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Tuesday', 'Friday']);
             let result = await pool.query('SELECT waiter_name, days_working FROM waiter WHERE waiter_name = $1', ['Dyllan']);
             assert.strict.deepEqual(result.rows, [
@@ -173,6 +183,8 @@ describe('Testing waiter shifts manager', function () {
         it('Should return waiter_name as Sam and the days_working should be updated to "Monday Tuesday Friday Saturday" ', async function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
+
+            await shiftInstance.checkLogin('Sam', '123');
 
             await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Tuesday', 'Friday', 'Saturday']);
             let result = await pool.query('SELECT waiter_name, days_working FROM waiter WHERE waiter_name = $1', ['Sam']);
@@ -184,6 +196,8 @@ describe('Testing waiter shifts manager', function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
 
+            await shiftInstance.checkLogin('Dyllan', '123');            
+
             await shiftInstance.updateWorkingDays('Dyllan', []);
             let result = await pool.query('SELECT waiter_name, days_working FROM waiter WHERE waiter_name = $1', ['Dyllan']);
             assert.strict.deepEqual(result.rows, [
@@ -193,6 +207,8 @@ describe('Testing waiter shifts manager', function () {
         it('Should return waiter_name as Dyllan and the days_working should be updated to "none" with undefined days ', async function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
+
+            await shiftInstance.checkLogin('Dyllan', '123');            
 
             await shiftInstance.updateWorkingDays('Dyllan');
             let result = await pool.query('SELECT waiter_name, days_working FROM waiter WHERE waiter_name = $1', ['Dyllan']);
@@ -206,6 +222,12 @@ describe('Testing waiter shifts manager', function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.checkLogin('Dyllan', '123');
+            await shiftInstance.checkLogin('Sam', '123');
+            await shiftInstance.checkLogin('Kayla', '123');
+            await shiftInstance.checkLogin('Chris', '123');
+            await shiftInstance.checkLogin('Mark', '123');
 
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
             await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
@@ -230,6 +252,8 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
+            await shiftInstance.checkLogin('Dyllan', '123');
+
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
             await shiftInstance.clearShiftsTable();
 
@@ -241,6 +265,8 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
+            await shiftInstance.checkLogin('Chris', '123');
+
             await shiftInstance.updateWorkingDays('Chris', ['Monday', 'Tuesday', 'Friday']);
 
             let days = await shiftInstance.findWorkingDaysFor('Chris');
@@ -251,6 +277,8 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
+            await shiftInstance.checkLogin('Chris', '123');
+
             let days = await shiftInstance.findWorkingDaysFor('Chris');
             assert.strict.equal(days, 'none');
         });
@@ -258,6 +286,14 @@ describe('Testing waiter shifts manager', function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.checkLogin('Dyllan', '123');
+            await shiftInstance.checkLogin('Sam', '123');
+            await shiftInstance.checkLogin('Kayla', '123');
+            await shiftInstance.checkLogin('Chris', '123');
+            await shiftInstance.checkLogin('Mark', '123');
+            await shiftInstance.checkLogin('Shane', '123');
+            await shiftInstance.checkLogin('Amy', '123');
 
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
             await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
@@ -272,6 +308,12 @@ describe('Testing waiter shifts manager', function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.checkLogin('Dyllan', '123');
+            await shiftInstance.checkLogin('Sam', '123');
+            await shiftInstance.checkLogin('Kayla', '123');
+            await shiftInstance.checkLogin('Chris', '123');
+            await shiftInstance.checkLogin('Mark', '123');
 
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
             await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
@@ -334,6 +376,12 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
+            await shiftInstance.checkLogin('Dyllan', '123');
+            await shiftInstance.checkLogin('Sam', '123');
+            await shiftInstance.checkLogin('Kayla', '123');
+            await shiftInstance.checkLogin('Chris', '123');
+            await shiftInstance.checkLogin('Mark', '123');
+
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
             await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
             await shiftInstance.updateWorkingDays('Kayla', ['Monday', 'Thursday', 'Friday']);
@@ -348,6 +396,12 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
+            await shiftInstance.checkLogin('Dyllan', '123');
+            await shiftInstance.checkLogin('Sam', '123');
+            await shiftInstance.checkLogin('Kayla', '123');
+            await shiftInstance.checkLogin('Chris', '123');
+            await shiftInstance.checkLogin('Mark', '123');
+
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
             await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
             await shiftInstance.updateWorkingDays('Kayla', ['Monday', 'Thursday', 'Friday']);
@@ -358,10 +412,32 @@ describe('Testing waiter shifts manager', function () {
             let workers = await shiftInstance.waiterInfo('Dyllan');
             assert.strict.deepEqual(workers, ['Monday', 'Friday']);
         });
+        it('Should return a list of days Dyllan is working but the chosen days should be removed (Monday, Wednesday + Friday)', async function () {
+            let shiftInstance = WaiterManager(pool);
+            await shiftInstance.buildWaiterTable();
+            await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.checkLogin('Dyllan', '123');
+
+            await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
+
+            await shiftInstance.removeWaiterFrom('Dyllan', 'Wednesday');
+            await shiftInstance.removeWaiterFrom('Dyllan', 'Monday');
+            await shiftInstance.removeWaiterFrom('Dyllan', 'Friday');
+
+            let workers = await shiftInstance.waiterInfo('Dyllan');
+            assert.strict.deepEqual(workers, ['none']);
+        });
         it('Should return a list of days Dyllan and Mark are working but the chosen days should be removed (Wednesday + Friday)', async function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
+
+            await shiftInstance.checkLogin('Dyllan', '123');
+            await shiftInstance.checkLogin('Sam', '123');
+            await shiftInstance.checkLogin('Kayla', '123');
+            await shiftInstance.checkLogin('Chris', '123');
+            await shiftInstance.checkLogin('Mark', '123');
 
             await shiftInstance.updateWorkingDays('Dyllan', ['Monday', 'Wednesday', 'Friday']);
             await shiftInstance.updateWorkingDays('Sam', ['Monday', 'Wednesday', 'Saturday']);
@@ -394,6 +470,8 @@ describe('Testing waiter shifts manager', function () {
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
+            await shiftInstance.checkLogin('Dyllan', '123');
+
             let check = await shiftInstance.checkLogin('Dyllan', 'house');
 
             assert.strict.equal(check, false);
@@ -407,14 +485,14 @@ describe('Testing waiter shifts manager', function () {
 
             assert.strict.equal(check, true);
         });
-        it('should return "false" as the entered user does not exist', async function () {
+        it('should return "true" as the entered user does not exist but has been added to the database', async function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
             await shiftInstance.buildShiftsTable();
 
             let check = await shiftInstance.checkLogin('Michael', '123');
 
-            assert.strict.equal(check, false);
+            assert.strict.equal(check, true);
         });
     });
     describe('Admin mode testing', function () {

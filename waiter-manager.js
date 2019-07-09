@@ -109,7 +109,6 @@ module.exports = function (pool) {
             num = num + 1
             await pool.query('INSERT into waiter (id, waiter_name, days_working, password) values ($1, $2, $3, $4);', [ num, name, 'none', password]);
             waiterData.push({'name' : name, 'password': password, 'working': 'none'});
-            console.log(name + ' added with id: ' + num); 
             return true;
         };
     };
@@ -213,11 +212,6 @@ module.exports = function (pool) {
 
         var newWorking = '';
         days = days.split(' ');
-        for (var z = 0; z < days.length; z++) {
-            if (days[z] === '') {
-                days.splice(z, 1);
-            };
-        };
         for (var x = 0; x < days.length; x++) {
             if (day === days[x]) {
                 days.splice(x, 1);

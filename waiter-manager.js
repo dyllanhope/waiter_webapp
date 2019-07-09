@@ -1,12 +1,5 @@
 module.exports = function (pool) {
     var waiterData = [
-        { name: 'Dyllan', password: '123', working: 'none' },
-        { name: 'Sam', password: '123', working: 'none' },
-        { name: 'Mark', password: '123', working: 'none' },
-        { name: 'Kayla', password: '123', working: 'none' },
-        { name: 'Shane', password: '123', working: 'none' },
-        { name: 'Amy', password: '123', working: 'none' },
-        { name: 'Chris', password: '123', working: 'none' },
         { name: 'Admin', password: 'admin', working: 'none' }
     ];
     var weekdays = [
@@ -103,6 +96,7 @@ module.exports = function (pool) {
     };
 
     async function checkLogin (name, password) {
+        let count = await pool.query('SELECT id FROM waiter');
         let result = await pool.query('SELECT waiter_name, password FROM waiter WHERE waiter_name = $1', [name]);
         if (result.rowCount !== 0) {
             if (result.rows[0].password === password) {
@@ -111,7 +105,12 @@ module.exports = function (pool) {
                 return false;
             };
         } else {
-            return false;
+            let num = Number(count.rows.length);
+            num = num + 1
+            await pool.query('INSERT into waiter (id, waiter_name, days_working, password) values ($1, $2, $3, $4);', [ num, name, 'none', password]);
+            waiterData.push({'name' : name, 'password': password, 'working': 'none'});
+            console.log(name + ' added with id: ' + num); 
+            return true;
         };
     };
 
@@ -192,6 +191,7 @@ module.exports = function (pool) {
 
     function waiterInfo (name) {
         let data = 'none';
+        
         for (var x = 0; x < waiterData.length; x++) {
             if (waiterData[x].name === name) {
                 data = waiterData[x].working;

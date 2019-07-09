@@ -79,7 +79,7 @@ app.get('/day/:chosenDay', async function (req, res) {
     let day = req.params.chosenDay;
     let workers = await waiterManager.findWaitersFor();
     res.render('admin', {
-        days: await waiterManager.returnWeekdayObject(),
+        days: await waiterManager.returnWeekdayObject(), 
         workers: workers,
         notWorking: await waiterManager.notWorking(),
         day
@@ -159,7 +159,7 @@ app.post('/back', async function (req, res) {
 
 app.post('/clear', async function (req, res) {
     await waiterManager.clearShiftsTable();
-    res.redirect('/');
+    res.redirect('/admin');
 });
 
 app.post('/waiters/:username', async function (req, res) {

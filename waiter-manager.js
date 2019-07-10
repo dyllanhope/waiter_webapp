@@ -169,7 +169,7 @@ module.exports = function (pool) {
             for (var k = 0; k < dayList.length; k++) {
                 for (var x = 0; x < names.length; x++) {
                     if (dayList[k] === names[x].day) {
-                        names[x].waiters.push(result.rows[i].waiter_name + ' (' + dayList.length + ')');
+                        names[x].waiters.push({'name':result.rows[i].waiter_name, 'shifts': dayList.length});
                     };
                 }
             };

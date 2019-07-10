@@ -18,8 +18,8 @@
                 {{#each workers}}
                 <td>
                     {{#each waiters}}
-                    <form action="/deleteWaiter/{{this}}-{{../day}}" method='POST'>
-                        <span style="float: right"> <a href="/update/{{this}}">{{this}}
+                    <form action="/deleteWaiter/{{name}}-{{../day}}" method='POST'>
+                        <span style="float: right"> <a href="/update/{{name}}">{{name}} ({{shifts}})
                             <input class='deleteBtn' type="submit" value=" - "
                                 onclick="return confirm('Are you sure you want to remove them from this day?')">
                        </a> </span> <br>
@@ -37,7 +37,7 @@
     </div>
     <div class='col-4 center'>
         <form action="/clear" method="POST">
-            <input type="submit" class="btnStyle" style='width:130px' value="Clear shifts">
+            <input type="submit" class="btnStyle" style='width:130px' value="Clear shifts" onclick="return confirm('Are you sure you want to clear all the shifts for the week?')">
         </form>
         <form action="/">
             <input type="submit" class="btnStyle" style='width:130px' value="Login screen">

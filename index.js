@@ -67,31 +67,10 @@ app.get('/', async function (req, res) {
     res.render('login');
 });
 
-app.get('/waiters/:username', async function (req, res) {
-    let waiter = req.params.username;
-    res.render('login', {
-        days: await waiterManager.returnWeekdayObject(),
-        name: waiter
-    });
-});
-
-app.get('/day/:chosenDay', async function (req, res) {
-    let day = req.params.chosenDay;
-    let workers = await waiterManager.findWaitersFor();
-    res.render('admin', {
-        days: await waiterManager.returnWeekdayObject(), 
-        workers: workers,
-        notWorking: await waiterManager.notWorking(),
-        day
-    });
-});
-
 app.get('/update/:worker', async function (req, res) {
     let user = req.params.worker;
-    let name = user.split(' ');
-    name = name[0];
     res.render('days', {
-        name: name,
+        name: user,
         days: await waiterManager.returnWeekdayObject()
     });
 });
@@ -163,6 +142,7 @@ app.post('/clear', async function (req, res) {
 });
 
 app.post('/waiters/:username', async function (req, res) {
+    req.flash('confirm', '');
     let user = req.params.username;
     let days = [];
     let type = typeof req.body.chkDay;
@@ -173,11 +153,12 @@ app.post('/waiters/:username', async function (req, res) {
         days = req.body.chkDay;
     };
     await waiterManager.updateWorkingDays(user, days);
-    if (waiterManager.returnAdminMode() === true) {
-        res.redirect('/admin');
-    } else {
-        res.redirect('/');
-    };
+        req.flash('confirm', 'Shifts have been updated successfully!');
+        res.render('days', {
+            name: user,
+            days: await waiterManager.returnWeekdayObject(),
+            working: await waiterManager.findWorkingDaysFor(user)
+        });
 });
 
 async function buildDBs () {

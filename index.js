@@ -116,7 +116,7 @@ app.post('/login', async function (req, res) {
     user = user.trim();
 
     if (user) {
-    let check = await waiterManager.checkLogin(user, password);
+        let check = await waiterManager.checkLogin(user, password);
         if (check) {
             if (user === 'Admin') {
                 waiterManager.setAdminMode(true);
@@ -133,9 +133,9 @@ app.post('/login', async function (req, res) {
         };
     } else {
         req.flash('error', 'Please enter a username');
-            res.render('login', {
-                name: user
-            });
+        res.render('login', {
+            name: user
+        });
     }
 });
 
@@ -189,13 +189,32 @@ app.post('/waiters/:username', async function (req, res) {
     } else {
         days = req.body.chkDay;
     };
-    await waiterManager.updateWorkingDays(user, days);
-    req.flash('confirm', 'Shifts have been updated successfully!');
-    res.render('days', {
-        name: user,
-        days: await waiterManager.returnWeekdayObject(),
-        working: await waiterManager.findWorkingDaysFor(user)
-    });
+    if (days.length > 3) {
+        req.flash('confirm', 'You have selected too many shifts');
+        res.render('days', {
+            error: true,
+            name: user,
+            days: await waiterManager.returnWeekdayObject(),
+            working: await waiterManager.findWorkingDaysFor(user)
+        });
+    } else if (days.length < 3) {
+        req.flash('confirm', 'You have not selected enough shifts');
+        res.render('days', {
+            error: true,
+            name: user,
+            days: await waiterManager.returnWeekdayObject(),
+            working: await waiterManager.findWorkingDaysFor(user)
+        });
+    } else {
+        await waiterManager.updateWorkingDays(user, days);
+        req.flash('confirm', 'Shifts have been updated successfully!');
+        res.render('days', {
+            error: false,
+            name: user,
+            days: await waiterManager.returnWeekdayObject(),
+            working: await waiterManager.findWorkingDaysFor(user)
+        });
+    }
 });
 
 async function buildDBs() {

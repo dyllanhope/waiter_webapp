@@ -21,7 +21,11 @@
 </div>
 <div class="row">
     <div class="col-md-12 text-center">
+        {{#if error}}
+        <h4 style='color:crimson'>{{messages.confirm}}</h4>
+        {{else}}
         <h4 style='color:green'>{{messages.confirm}}</h4>
+        {{/if}}
     </div>
 </div>
 <div class='row'>

@@ -43,6 +43,29 @@ const helpers = {
             };
         };
         return false;
+    },
+    isBooked: function (name, day) {
+        let weekList = waiterManager.returnWeekdayObject();
+        let waiterList = waiterManager.returnWaiterData();
+        for (var z = 0; z < waiterList.length; z++) {
+            if (waiterList[z].name === name) {
+                let daysWorking = (waiterList[z].working).trim();
+                daysWorking = daysWorking.split(' ');
+                for (var y = 0; y < daysWorking.length; y++) {
+                    if (daysWorking[y] === day) {
+                        return false;
+                    };
+                };
+            };
+        };
+        for (var x = 0; x < weekList.length; x++) {
+            if (weekList[x].day === day) {
+                if (weekList[x].waiters === 3) {
+                    return true;
+                };
+            };
+        };
+        return false;
     }
 };
 
@@ -98,11 +121,7 @@ app.post('/login', async function (req, res) {
             res.redirect('/admin');
         } else {
             waiterManager.setAdminMode(false);
-            res.render('days', {
-                name: user,
-                days: await waiterManager.returnWeekdayObject(),
-                working: await waiterManager.findWorkingDaysFor(user)
-            });
+            res.redirect('/waiter/' + user);
         }
     } else {
         req.flash('error', 'The username or password entered was incorrect');
@@ -110,6 +129,16 @@ app.post('/login', async function (req, res) {
             name: user
         });
     };
+});
+
+app.get('/waiter/:username', async function (req, res) {
+    let user = req.params.username;
+
+    res.render('days', {
+        name: user,
+        days: await waiterManager.returnWeekdayObject(),
+        working: await waiterManager.findWorkingDaysFor(user)
+    });
 });
 
 app.get('/admin', async function (req, res) {
@@ -153,15 +182,15 @@ app.post('/waiters/:username', async function (req, res) {
         days = req.body.chkDay;
     };
     await waiterManager.updateWorkingDays(user, days);
-        req.flash('confirm', 'Shifts have been updated successfully!');
-        res.render('days', {
-            name: user,
-            days: await waiterManager.returnWeekdayObject(),
-            working: await waiterManager.findWorkingDaysFor(user)
-        });
+    req.flash('confirm', 'Shifts have been updated successfully!');
+    res.render('days', {
+        name: user,
+        days: await waiterManager.returnWeekdayObject(),
+        working: await waiterManager.findWorkingDaysFor(user)
+    });
 });
 
-async function buildDBs () {
+async function buildDBs() {
     await waiterManager.buildWaiterTable();
     await waiterManager.buildShiftsTable();
 }

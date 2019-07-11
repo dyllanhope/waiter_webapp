@@ -29,10 +29,8 @@ describe('Testing waiter shifts manager', function () {
             let shiftInstance = WaiterManager(pool);
 
             await shiftInstance.buildWaiterTable();
-            let result = await pool.query('SELECT waiter_name FROM waiter;');
-            assert.strict.deepEqual(result.rows, [
-                { 'waiter_name': 'Admin' }
-
+            assert.strict.deepEqual(shiftInstance.returnWaiterData(), [
+                { name: 'Admin', password: 'admin', working: 'none' }
             ]);
         });
     });

@@ -249,6 +249,10 @@ module.exports = function (pool) {
         return adminMode;
     };
 
+    function returnWaiterData () {
+        return waiterData;
+    };
+
     return {
         updateWorkingDays,
         buildWaiterTable,
@@ -263,6 +267,7 @@ module.exports = function (pool) {
         waiterInfo,
         removeWaiterFrom,
         setAdminMode,
-        returnAdminMode
+        returnAdminMode,
+        returnWaiterData
     };
 };

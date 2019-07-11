@@ -29,7 +29,9 @@
         <form action="/waiters/{{name}}" method="POST">
             <h3>Select the days you want to work: </h3>
             {{#each days}}
-                {{#if (isChecked ../name day) }}
+                {{#if (isBooked ../name day)}}
+                    <input type="checkbox" name="chkDay" id='{{day}}' value="{{day}}" disabled><label for="{{day}}" style='color:slategrey'>{{day}}</label>
+                {{else if (isChecked ../name day) }}
                     <input type="checkbox" name="chkDay" id='{{day}}' value="{{day}}" checked><label for="{{day}}">{{day}}</label>
                 {{else}}
                     <input type="checkbox" name="chkDay" id='{{day}}' value="{{day}}"><label for="{{day}}">{{day}}</label>

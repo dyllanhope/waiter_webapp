@@ -36,13 +36,24 @@ app.use(flash());
 
 const helpers = {
     isChecked: function (name, day) {
-        let list = waiterManager.waiterInfo(name);
-        for (var i = 0; i < list.length; i++) {
-            if (day === list[i]) {
-                return true;
+        let check = waiterManager.returnChosen();
+        if (check) {
+            let list = waiterManager.waiterInfo(name);
+            for (var i = 0; i < list.length; i++) {
+                if (day === list[i]) {
+                    return true;
+                };
             };
+            return false;
+        } else {
+            let list = waiterManager.returnTempDays();
+            for (i = 0; i < list.length; i++) {
+                if (list[i] === day){
+                    return true;
+                };
+            };
+            return false;
         };
-        return false;
     },
     isBooked: function (name, day) {
         let weekList = waiterManager.returnWeekdayObject();
@@ -66,6 +77,10 @@ const helpers = {
             };
         };
         return false;
+    },
+    isAdmin: function (){
+        let check = waiterManager.returnAdminMode();
+        return check;
     }
 };
 
@@ -144,8 +159,7 @@ app.get('/waiter/:username', async function (req, res) {
 
     res.render('days', {
         name: user,
-        days: await waiterManager.returnWeekdayObject(),
-        working: await waiterManager.findWorkingDaysFor(user)
+        days: await waiterManager.returnWeekdayObject()
     });
 });
 
@@ -169,6 +183,7 @@ app.post('/back', async function (req, res) {
     if (waiterManager.returnAdminMode() === true) {
         res.redirect('/admin');
     } else {
+        waiterManager.tempDays([]);
         res.redirect('/');
     };
 });
@@ -190,29 +205,31 @@ app.post('/waiters/:username', async function (req, res) {
         days = req.body.chkDay;
     };
     if (days.length > 3) {
+        waiterManager.setCorrectChosen(false);
+        waiterManager.tempDays(days);
         req.flash('confirm', 'You have selected too many shifts');
         res.render('days', {
             error: true,
             name: user,
             days: await waiterManager.returnWeekdayObject(),
-            working: await waiterManager.findWorkingDaysFor(user)
         });
     } else if (days.length < 3) {
+        waiterManager.setCorrectChosen(false);
+        waiterManager.tempDays(days);
         req.flash('confirm', 'You have not selected enough shifts');
         res.render('days', {
             error: true,
             name: user,
             days: await waiterManager.returnWeekdayObject(),
-            working: await waiterManager.findWorkingDaysFor(user)
         });
     } else {
+        waiterManager.setCorrectChosen(true);
         await waiterManager.updateWorkingDays(user, days);
         req.flash('confirm', 'Shifts have been updated successfully!');
         res.render('days', {
             error: false,
             name: user,
             days: await waiterManager.returnWeekdayObject(),
-            working: await waiterManager.findWorkingDaysFor(user)
         });
     }
 });

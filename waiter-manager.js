@@ -1,4 +1,6 @@
 module.exports = function (pool) {
+    var tempDaysStorage = [];
+    var correctAmountChosen = false;
     var waiterData = [
         { name: 'Admin', password: 'admin', working: 'none' }
     ];
@@ -169,7 +171,7 @@ module.exports = function (pool) {
             for (var k = 0; k < dayList.length; k++) {
                 for (var x = 0; x < names.length; x++) {
                     if (dayList[k] === names[x].day) {
-                        names[x].waiters.push({'name':result.rows[i].waiter_name, 'shifts': dayList.length});
+                        names[x].waiters.push({'name':result.rows[i].waiter_name});
                     };
                 }
             };
@@ -253,6 +255,22 @@ module.exports = function (pool) {
         return waiterData;
     };
 
+    function setCorrectChosen (bool){
+        correctAmountChosen = bool;
+    };
+
+    function returnChosen(){
+        return correctAmountChosen;
+    };
+
+    function tempDays(list){
+        tempDaysStorage = list;
+    };
+
+    function returnTempDays (){
+        return tempDaysStorage;
+    };
+
     return {
         updateWorkingDays,
         buildWaiterTable,
@@ -268,6 +286,10 @@ module.exports = function (pool) {
         removeWaiterFrom,
         setAdminMode,
         returnAdminMode,
-        returnWaiterData
+        returnWaiterData,
+        setCorrectChosen,
+        returnChosen,
+        tempDays,
+        returnTempDays
     };
 };

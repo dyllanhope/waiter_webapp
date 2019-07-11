@@ -9,7 +9,8 @@
             <tr>
                 {{#each days}}
                 <th>
-                    <h4 class='{{style}}' style="float: none; text-align: center; margin:2px"><u>{{day}}</u> <br> waiters:
+                    <h4 class='{{style}}' style="float: none; text-align: center; margin:2px"><u>{{day}}</u> <br>
+                        waiters:
                         {{waiters}}</h4>
                 </th>
                 {{/each}}
@@ -19,10 +20,10 @@
                 <td>
                     {{#each waiters}}
                     <form action="/deleteWaiter/{{name}}-{{../day}}" method='POST'>
-                        <span style="float: right"> <a class='choosing' href="/update/{{name}}">{{name}} ({{shifts}})
-                            <input class='deleteBtn' type="submit" value=" - "
-                                onclick="return confirm('Are you sure you want to remove them from this day?')">
-                       </a> </span> <br>
+                        <span style="float: right"> <a class='choosing' href="/update/{{name}}">{{name}}
+                                <input class='deleteBtn' type="submit" value=" - "
+                                    onclick="return confirm('Are you sure you want to remove them from this day?')">
+                            </a> </span> <br> <br>
                     </form>
                     {{/each}}
                 </td>
@@ -32,21 +33,29 @@
         </a>
     </div>
 </div>
+<hr>
 <div class='row'>
-    <div class='col-md-4 text-center'>
-    </div>
-    <div class='col-md-4 text-center'>
-        <form action="/clear" method="POST">
-            <input type="submit" class="btnStyle" style='width:130px' value="Clear shifts" onclick="return confirm('Are you sure you want to clear all the shifts for the week?')">
-        </form>
-        <form action="/">
-            <input type="submit" class="btnStyle" style='width:130px' value="Login screen">
-        </form>
-    </div>
-    <div class='col-md-4'>
-        <h3>Waiters that haven't chosen shifts:</h3>
+    <div class='col-md-6'>
+        <h3 style='margin-top: 0px'>Waiters that haven't chosen shifts:</h3>
         {{#each notWorking}}
         <a class='choosing' href="/update/{{this}}">{{this}}</a> <br>
         {{/each}}
+    </div>
+    <div class='col-md-6 text-center'>
+        <div class='btn-toolbar' style='justify-content: center; display:flex' role='toolbar'
+            aria-label="Toolbar for buttons">
+            <form action="/clear" method="POST">
+                <div class='btn-group' role='group' aria-label='Clearing shifts'>
+                    <button type='submit' class='btn adminBtn'
+                        onclick="return confirm('Are you sure you want to clear all the shifts for the week?')">Clear
+                        shifts</button>
+                </div>
+            </form>
+            <form action="/">
+                <div class='btn-group' role='group' aria-label='Logout'>
+                    <button type='submit' class='btn adminBtn'>Logout</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

@@ -324,47 +324,47 @@ describe('Testing waiter shifts manager', function () {
                 {
                     day: 'Monday',
                     waiters: [
-                        {'name':'Dyllan', 'shifts': 3},
-                        {'name':'Sam', 'shifts': 3},
-                        {'name':'Kayla', 'shifts': 3}
+                        {'name':'Dyllan'},
+                        {'name':'Sam'},
+                        {'name':'Kayla'}
                     ]
                 }, {
                     day: 'Tuesday',
                     waiters: [
-                        {'name':'Chris', 'shifts': 3},
-                        {'name':'Mark', 'shifts': 5}
+                        {'name':'Chris'},
+                        {'name':'Mark'}
                     ]
                 }, {
                     day: 'Wednesday',
                     waiters: [
-                        {'name':'Dyllan', 'shifts': 3},
-                        {'name':'Sam', 'shifts': 3},
-                        {'name':'Chris', 'shifts': 3}
+                        {'name':'Dyllan'},
+                        {'name':'Sam'},
+                        {'name':'Chris'}
                     ]
                 }, {
                     day: 'Thursday',
                     waiters: [
-                        {'name':'Kayla', 'shifts': 3},
-                        {'name':'Mark', 'shifts': 5}
+                        {'name':'Kayla'},
+                        {'name':'Mark'}
                     ]
                 }, {
                     day: 'Friday',
                     waiters: [
-                        {'name':'Dyllan', 'shifts': 3},
-                        {'name':'Kayla', 'shifts': 3},
-                        {'name':'Mark', 'shifts': 5}
+                        {'name':'Dyllan'},
+                        {'name':'Kayla'},
+                        {'name':'Mark'}
                     ]
                 }, {
                     day: 'Saturday',
                     waiters: [
-                        {'name':'Sam', 'shifts': 3},
-                        {'name':'Mark', 'shifts': 5}
+                        {'name':'Sam'},
+                        {'name':'Mark'}
                     ]
                 }, {
                     day: 'Sunday',
                     waiters: [
-                        {'name':'Chris', 'shifts': 3},
-                        {'name':'Mark', 'shifts': 5}
+                        {'name':'Chris'},
+                        {'name':'Mark'}
                     ]
                 }
             ]);

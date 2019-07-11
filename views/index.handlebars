@@ -1,17 +1,17 @@
 <div class='row'>
-    <div class='col-3 center'>
+    <div class='col-md-3 text-center'>
     </div>
-    <div class='col-6 center'>
+    <div class='col-md-6 text-center'>
         <h1>Waiter login</h1>
     </div>
-    <div class='col-3 center'>
+    <div class='col-md-3 text-center'>
         <form action="/adminLogin" method="GET">
             <input type="submit" class='adminBtn' value='Admin login'>
         </form>
     </div>
 </div>
 <div class='row'>
-    <div class='col-12 center display'>
+    <div class='col-md-12 text-center display'>
         <ul>
         {{#each days}}
         <li class='{{style}}'><u>{{day}}</u> <br> waiters: {{waiters}}</li>
@@ -20,7 +20,7 @@
     </div>
 </div>
 <div class='row'>
-    <div class='col-12 center'>
+    <div class='col-md-12 text-center'>
         <h4><u style='color:black'>Select your name:</u></h4>
             {{#each waiters}}
                 <a href="/waiters/{{waiter_name}}">{{waiter_name}}</a> <br>

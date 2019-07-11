@@ -1,15 +1,15 @@
 <div class='row'>
-    <div class='col-12 center'>
+    <div class='col-md-12 text-center'>
         <h1>Waiter Data</h1>
     </div>
 </div>
 <div class='row'>
-    <div class='col-12 center'>
+    <div class='col-md-12 text-center'>
         <table>
             <tr>
                 {{#each days}}
                 <th>
-                    <h4 class='{{style}}' style="float: none; text-align: center"><u>{{day}}</u> <br> waiters:
+                    <h4 class='{{style}}' style="float: none; text-align: center; margin:2px"><u>{{day}}</u> <br> waiters:
                         {{waiters}}</h4>
                 </th>
                 {{/each}}
@@ -19,7 +19,7 @@
                 <td>
                     {{#each waiters}}
                     <form action="/deleteWaiter/{{name}}-{{../day}}" method='POST'>
-                        <span style="float: right"> <a href="/update/{{name}}">{{name}} ({{shifts}})
+                        <span style="float: right"> <a class='choosing' href="/update/{{name}}">{{name}} ({{shifts}})
                             <input class='deleteBtn' type="submit" value=" - "
                                 onclick="return confirm('Are you sure you want to remove them from this day?')">
                        </a> </span> <br>
@@ -33,9 +33,9 @@
     </div>
 </div>
 <div class='row'>
-    <div class='col-4 center'>
+    <div class='col-md-4 text-center'>
     </div>
-    <div class='col-4 center'>
+    <div class='col-md-4 text-center'>
         <form action="/clear" method="POST">
             <input type="submit" class="btnStyle" style='width:130px' value="Clear shifts" onclick="return confirm('Are you sure you want to clear all the shifts for the week?')">
         </form>
@@ -43,10 +43,10 @@
             <input type="submit" class="btnStyle" style='width:130px' value="Login screen">
         </form>
     </div>
-    <div class='col-4'>
+    <div class='col-md-4'>
         <h3>Waiters that haven't chosen shifts:</h3>
         {{#each notWorking}}
-        <a href="/update/{{this}}">{{this}}</a> <br>
+        <a class='choosing' href="/update/{{this}}">{{this}}</a> <br>
         {{/each}}
     </div>
 </div>

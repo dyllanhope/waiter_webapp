@@ -1,10 +1,10 @@
 <div class='row'>
-    <div class='col-12 center'>
+    <div class='col-md-12 text-center'>
         <h1>Waiter Shifts ({{name}})</h1>
     </div>
 </div>
 <div class='row'>
-    <div class='col-12 center'>
+    <div class='col-md-12 text-center'>
         <ul>
             {{#each days}}
             <li class='{{style}}'><u>{{day}}</u> <br> waiters: {{waiters}}</li>
@@ -13,32 +13,43 @@
     </div>
 </div>
 <div class='row'>
-    <div class='col-12 center'>
+    <div class='col-md-12 text-center'>
         <form action="/back" method="POST">
             <input type="submit" class='btnStyle' value="Back">
         </form>
     </div>
 </div>
 <div class="row">
-    <div class="col-12 center">
+    <div class="col-md-12 text-center">
         <h4 style='color:green'>{{messages.confirm}}</h4>
     </div>
 </div>
 <div class='row'>
-    <div class='col-12 center'>
-        <form action="/waiters/{{name}}" method="POST">
+    <div class='col-md-12 text-center'>
+        <form class="form-inline" action="/waiters/{{name}}" method="POST">
             <h3>Select the days you want to work: </h3>
             {{#each days}}
-                {{#if (isBooked ../name day)}}
-                    <input type="checkbox" name="chkDay" id='{{day}}' value="{{day}}" disabled><label for="{{day}}" style='color:slategrey'>{{day}}</label>
-                {{else if (isChecked ../name day) }}
-                    <input type="checkbox" name="chkDay" id='{{day}}' value="{{day}}" checked><label for="{{day}}">{{day}}</label>
-                {{else}}
-                    <input type="checkbox" name="chkDay" id='{{day}}' value="{{day}}"><label for="{{day}}">{{day}}</label>
-                {{/if}}
+            <div class='checkbox form-group'>
+                <label>
+                    {{#if (isBooked ../name day)}}
+                    <label style='color:slategrey'>
+                        <input class='disabled' type="checkbox" name="chkDay" id='{{day}}' value="{{day}}" disabled>
+                        {{day}}
+                    </label>
+                    {{else if (isChecked ../name day) }}
+                    <label>
+                        <input type="checkbox" name="chkDay" id='{{day}}' value="{{day}}" checked> {{day}}
+                    </label>
+                    {{else}}
+                    <label>
+                        <input type="checkbox" name="chkDay" id='{{day}}' value="{{day}}"> {{day}}
+                    </label>
+                    {{/if}}
+            </div>
             {{/each}}
             <br>
-            <button type='submit' style='margin-top:10px' class='btnStyle' onclick="return confirm('Are you sure you want to update your shifts?')">Update</button>
+            <button type='submit' style='margin-top:10px' class='btnStyle'
+                onclick="return confirm('Are you sure you want to update your shifts?')">Update</button>
         </form>
     </div>
 </div>

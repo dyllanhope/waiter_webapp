@@ -18,20 +18,23 @@ table{
 u{
     color: white;
 }
-a:link {
+.choosing {
+    color: black;
+}
+.choosing:link {
     text-decoration: none;
 }
   
-a:visited {
+.choosing:visited {
     text-decoration: none;
 }
   
-a:hover {
+.choosing:hover {
     color: rgb(1, 165, 1);
     text-decoration: none;
 }
   
-a:active {
+.choosing:active {
     text-decoration: none;
 }
 

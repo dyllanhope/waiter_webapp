@@ -113,22 +113,30 @@ app.post('/deleteWaiter/:waiter', async function (req, res) {
 app.post('/login', async function (req, res) {
     let password = req.body.password;
     let user = req.body.username;
-    let check = await waiterManager.checkLogin(user, password);
+    user = user.trim();
 
-    if (check) {
-        if (user === 'Admin') {
-            waiterManager.setAdminMode(true);
-            res.redirect('/admin');
+    if (user) {
+    let check = await waiterManager.checkLogin(user, password);
+        if (check) {
+            if (user === 'Admin') {
+                waiterManager.setAdminMode(true);
+                res.redirect('/admin');
+            } else {
+                waiterManager.setAdminMode(false);
+                res.redirect('/waiter/' + user);
+            }
         } else {
-            waiterManager.setAdminMode(false);
-            res.redirect('/waiter/' + user);
-        }
+            req.flash('error', 'The username or password entered was incorrect');
+            res.render('login', {
+                name: user
+            });
+        };
     } else {
-        req.flash('error', 'The username or password entered was incorrect');
-        res.render('login', {
-            name: user
-        });
-    };
+        req.flash('error', 'Please enter a username');
+            res.render('login', {
+                name: user
+            });
+    }
 });
 
 app.get('/waiter/:username', async function (req, res) {

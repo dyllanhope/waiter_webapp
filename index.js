@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const flash = require('express-flash');
 const session = require('express-session');
 const WaiterManager = require('./waiter-manager');
+const WaiterManangerRoutes = require ('./routes/waiter-manager-routes');
+const Helpers = require ('./helpers');
 
 const app = express();
 
@@ -25,6 +27,8 @@ const pool = new Pool({
 });
 
 const waiterManager = WaiterManager(pool);
+const waiterManangerRoutes = WaiterManangerRoutes(waiterManager);
+const helpers = Helpers(waiterManager);
 
 app.use(session({
     secret: 'yikes',
@@ -33,56 +37,6 @@ app.use(session({
 }));
 
 app.use(flash());
-
-const helpers = {
-    isChecked: function (name, day) {
-        let check = waiterManager.returnChosen();
-        if (check) {
-            let list = waiterManager.waiterInfo(name);
-            for (var i = 0; i < list.length; i++) {
-                if (day === list[i]) {
-                    return true;
-                };
-            };
-            return false;
-        } else {
-            let list = waiterManager.returnTempDays();
-            for (i = 0; i < list.length; i++) {
-                if (list[i] === day){
-                    return true;
-                };
-            };
-            return false;
-        };
-    },
-    isBooked: function (name, day) {
-        let weekList = waiterManager.returnWeekdayObject();
-        let waiterList = waiterManager.returnWaiterData();
-        for (var z = 0; z < waiterList.length; z++) {
-            if (waiterList[z].name === name) {
-                let daysWorking = (waiterList[z].working).trim();
-                daysWorking = daysWorking.split(' ');
-                for (var y = 0; y < daysWorking.length; y++) {
-                    if (daysWorking[y] === day) {
-                        return false;
-                    };
-                };
-            };
-        };
-        for (var x = 0; x < weekList.length; x++) {
-            if (weekList[x].day === day) {
-                if (weekList[x].waiters === 3) {
-                    return true;
-                };
-            };
-        };
-        return false;
-    },
-    isAdmin: function (){
-        let check = waiterManager.returnAdminMode();
-        return check;
-    }
-};
 
 const handlebarSetup = exphbs({
     partialsDir: './views',
@@ -101,138 +55,16 @@ app.use(bodyParser.json());
 
 buildDBs();
 
-app.get('/', async function (req, res) {
-    res.render('login');
-});
-
-app.get('/update/:worker', async function (req, res) {
-    let user = req.params.worker;
-    res.render('days', {
-        name: user,
-        days: await waiterManager.returnWeekdayObject()
-    });
-});
-
-app.post('/deleteWaiter/:waiter', async function (req, res) {
-    let waiter = req.params.waiter;
-    let data = waiter.split('-');
-    let day = data[1];
-    waiter = data[0].split(' ');
-    waiter = waiter[0];
-
-    await waiterManager.removeWaiterFrom(waiter, day);
-
-    res.redirect('/admin');
-});
-
-app.post('/login', async function (req, res) {
-    let password = req.body.password;
-    let user = req.body.username;
-    user = user.trim();
-
-    if (user) {
-        let check = await waiterManager.checkLogin(user, password);
-        if (check) {
-            if (user === 'Admin') {
-                waiterManager.setAdminMode(true);
-                res.redirect('/admin');
-            } else {
-                waiterManager.setAdminMode(false);
-                res.redirect('/waiter/' + user);
-            }
-        } else {
-            req.flash('error', 'The username or password entered was incorrect');
-            res.render('login', {
-                name: user
-            });
-        };
-    } else {
-        req.flash('error', 'Please enter a username');
-        res.render('login', {
-            name: user
-        });
-    }
-});
-
-app.get('/waiter/:username', async function (req, res) {
-    let user = req.params.username;
-
-    res.render('days', {
-        name: user,
-        days: await waiterManager.returnWeekdayObject()
-    });
-});
-
-app.get('/admin', async function (req, res) {
-    let workers = await waiterManager.findWaitersFor();
-    let notWorking = await waiterManager.notWorking();
-    res.render('admin', {
-        days: await waiterManager.returnWeekdayObject(),
-        notWorking,
-        workers
-    });
-});
-
-app.get('/adminLogin', async function (req, res) {
-    res.render('login', {
-        name: 'Admin'
-    });
-});
-
-app.post('/back', async function (req, res) {
-    if (waiterManager.returnAdminMode() === true) {
-        res.redirect('/admin');
-    } else {
-        waiterManager.tempDays([]);
-        res.redirect('/');
-    };
-});
-
-app.post('/clear', async function (req, res) {
-    await waiterManager.clearShiftsTable();
-    res.redirect('/admin');
-});
-
-app.post('/waiters/:username', async function (req, res) {
-    req.flash('confirm', '');
-    let user = req.params.username;
-    let days = [];
-    let type = typeof req.body.chkDay;
-
-    if (type === 'string') {
-        days.push(req.body.chkDay);
-    } else {
-        days = req.body.chkDay;
-    };
-    if (days.length > 3) {
-        waiterManager.setCorrectChosen(false);
-        waiterManager.tempDays(days);
-        req.flash('confirm', 'You have selected too many shifts');
-        res.render('days', {
-            error: true,
-            name: user,
-            days: await waiterManager.returnWeekdayObject(),
-        });
-    } else if (days.length < 3) {
-        waiterManager.setCorrectChosen(false);
-        waiterManager.tempDays(days);
-        req.flash('confirm', 'You have not selected enough shifts');
-        res.render('days', {
-            error: true,
-            name: user,
-            days: await waiterManager.returnWeekdayObject(),
-        });
-    } else {
-        waiterManager.setCorrectChosen(true);
-        await waiterManager.updateWorkingDays(user, days);
-        req.flash('confirm', 'Shifts have been updated successfully!');
-        res.render('days', {
-            error: false,
-            name: user,
-            days: await waiterManager.returnWeekdayObject(),
-        });
-    }
-});
+app.get('/', waiterManangerRoutes.index);
+app.get('/update/:worker', waiterManangerRoutes.adminUpdateWaiter);
+app.get('/waiter/:username', waiterManangerRoutes.loadSelection);
+app.get('/admin', waiterManangerRoutes.admin);
+app.get('/adminLogin', waiterManangerRoutes.adminLogin);
+app.post('/deleteWaiter/:waiter', waiterManangerRoutes.deleteWaiter);
+app.post('/login', waiterManangerRoutes.login);
+app.post('/back', waiterManangerRoutes.back);
+app.post('/clear', waiterManangerRoutes.clear);
+app.post('/waiters/:username', waiterManangerRoutes.waitersUpdate);
 
 async function buildDBs() {
     await waiterManager.buildWaiterTable();

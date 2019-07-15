@@ -505,6 +505,23 @@ describe('Testing waiter shifts manager', function () {
             assert.strict.equal(shiftInstance.returnAdminMode(), false);
         });
     });
+    describe('Error data retention testing', function () {
+        it('Should return True after being updated to true', function () {
+            let shiftInstance = WaiterManager(pool);
+            shiftInstance.setCorrectChosen(true);
+            assert.strict.equal(shiftInstance.returnChosen(), true);
+        });
+        it('Should return false after being updated to false', function () {
+            let shiftInstance = WaiterManager(pool);
+            shiftInstance.setCorrectChosen(false);
+            assert.strict.equal(shiftInstance.returnChosen(), false);
+        });
+        it('Should return the list of days chosen (Monday, Tuesday + Thursday) for temporary data retention', function () {
+            let shiftInstance = WaiterManager(pool);
+            shiftInstance.tempDays(['Monday','Tuesday','Thursday']);
+            assert.strict.deepEqual(shiftInstance.returnTempDays(), ['Monday','Tuesday','Thursday']);
+        });
+    });
 });
 
 after(function () {

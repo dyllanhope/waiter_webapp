@@ -5,8 +5,8 @@ const bodyParser = require('body-parser');
 const flash = require('express-flash');
 const session = require('express-session');
 const WaiterManager = require('./waiter-manager');
-const WaiterManangerRoutes = require ('./routes/waiter-manager-routes');
-const Helpers = require ('./helpers');
+const WaiterManangerRoutes = require ('./waiter-manager-routes');
+const Helpers = require ('./waiter-manager-helpers');
 
 const app = express();
 
@@ -56,11 +56,11 @@ app.use(bodyParser.json());
 buildDBs();
 
 app.get('/', waiterManangerRoutes.index);
-app.get('/update/:worker', waiterManangerRoutes.adminUpdateWaiter);
-app.get('/waiter/:username', waiterManangerRoutes.loadSelection);
+app.get('/waiters/update/:username', waiterManangerRoutes.loadSelection);
+app.get('/waiters/:username', waiterManangerRoutes.loadSelection);
 app.get('/admin', waiterManangerRoutes.admin);
 app.get('/adminLogin', waiterManangerRoutes.adminLogin);
-app.post('/deleteWaiter/:waiter', waiterManangerRoutes.deleteWaiter);
+app.post('/waiters/delete/:waiter', waiterManangerRoutes.deleteWaiter);
 app.post('/login', waiterManangerRoutes.login);
 app.post('/back', waiterManangerRoutes.back);
 app.post('/clear', waiterManangerRoutes.clear);

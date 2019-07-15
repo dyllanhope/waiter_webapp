@@ -17,7 +17,7 @@ module.exports = function (waiterManager) {
                     res.redirect('/admin');
                 } else {
                     waiterManager.setAdminMode(false);
-                    res.redirect('/waiter/' + user);
+                    res.redirect('/waiters/' + user);
                 }
             } else {
                 req.flash('error', 'The username or password entered was incorrect');
@@ -116,14 +116,6 @@ module.exports = function (waiterManager) {
         res.redirect('/admin');
     };
 
-    async function adminUpdateWaiter (req, res) {
-        let user = req.params.worker;
-        res.render('days', {
-            name: user,
-            days: await waiterManager.returnWeekdayObject()
-        });
-    };
-
     async function loadSelection (req, res) {
         let user = req.params.username;
     
@@ -142,7 +134,6 @@ module.exports = function (waiterManager) {
         clear,
         back,
         deleteWaiter,
-        adminUpdateWaiter,
         loadSelection
     }
 };

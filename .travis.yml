@@ -7,12 +7,18 @@ node_js:
   - "v9.11.2"
 
 before_script:
+  - sudo cp /etc/postgresql/9.4/main/pg_hba.conf /etc/postgresql/9.5/main/pg_hba.conf
+  - sudo /etc/init.d/postgresql restart
   - psql -c 'create database  waiter_shifts;' -U postgres
   - psql -U postgres -d waiter_shifts -a -f sql/tables.sql
 
 after_success: npm run coverage
 
 addons:
-    apt:
+  apt:
+    sources:
+    - precise-pgdg-9.5
     packages:
-    - postgresql-server-dev-9.2
+    - postgresql-9.5
+    - postgresql-contrib-9.5
+  postgresql: 9.5

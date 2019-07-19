@@ -194,7 +194,7 @@ describe('Testing waiter shifts manager', function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
 
-            await shiftInstance.checkLogin('Dyllan', '123');            
+            await shiftInstance.checkLogin('Dyllan', '123');
 
             await shiftInstance.updateWorkingDays('Dyllan', []);
             let result = await pool.query('SELECT waiter_name, days_working FROM waiter WHERE waiter_name = $1', ['Dyllan']);
@@ -206,7 +206,7 @@ describe('Testing waiter shifts manager', function () {
             let shiftInstance = WaiterManager(pool);
             await shiftInstance.buildWaiterTable();
 
-            await shiftInstance.checkLogin('Dyllan', '123');            
+            await shiftInstance.checkLogin('Dyllan', '123');
 
             await shiftInstance.updateWorkingDays('Dyllan');
             let result = await pool.query('SELECT waiter_name, days_working FROM waiter WHERE waiter_name = $1', ['Dyllan']);
@@ -324,47 +324,47 @@ describe('Testing waiter shifts manager', function () {
                 {
                     day: 'Monday',
                     waiters: [
-                        {'name':'Dyllan'},
-                        {'name':'Sam'},
-                        {'name':'Kayla'}
+                        { 'name': 'Dyllan' },
+                        { 'name': 'Sam' },
+                        { 'name': 'Kayla' }
                     ]
                 }, {
                     day: 'Tuesday',
                     waiters: [
-                        {'name':'Chris'},
-                        {'name':'Mark'}
+                        { 'name': 'Chris' },
+                        { 'name': 'Mark' }
                     ]
                 }, {
                     day: 'Wednesday',
                     waiters: [
-                        {'name':'Dyllan'},
-                        {'name':'Sam'},
-                        {'name':'Chris'}
+                        { 'name': 'Dyllan' },
+                        { 'name': 'Sam' },
+                        { 'name': 'Chris' }
                     ]
                 }, {
                     day: 'Thursday',
                     waiters: [
-                        {'name':'Kayla'},
-                        {'name':'Mark'}
+                        { 'name': 'Kayla' },
+                        { 'name': 'Mark' }
                     ]
                 }, {
                     day: 'Friday',
                     waiters: [
-                        {'name':'Dyllan'},
-                        {'name':'Kayla'},
-                        {'name':'Mark'}
+                        { 'name': 'Dyllan' },
+                        { 'name': 'Kayla' },
+                        { 'name': 'Mark' }
                     ]
                 }, {
                     day: 'Saturday',
                     waiters: [
-                        {'name':'Sam'},
-                        {'name':'Mark'}
+                        { 'name': 'Sam' },
+                        { 'name': 'Mark' }
                     ]
                 }, {
                     day: 'Sunday',
                     waiters: [
-                        {'name':'Chris'},
-                        {'name':'Mark'}
+                        { 'name': 'Chris' },
+                        { 'name': 'Mark' }
                     ]
                 }
             ]);
@@ -518,8 +518,8 @@ describe('Testing waiter shifts manager', function () {
         });
         it('Should return the list of days chosen (Monday, Tuesday + Thursday) for temporary data retention', function () {
             let shiftInstance = WaiterManager(pool);
-            shiftInstance.tempDays(['Monday','Tuesday','Thursday']);
-            assert.strict.deepEqual(shiftInstance.returnTempDays(), ['Monday','Tuesday','Thursday']);
+            shiftInstance.tempDays(['Monday', 'Tuesday', 'Thursday']);
+            assert.strict.deepEqual(shiftInstance.returnTempDays(), ['Monday', 'Tuesday', 'Thursday']);
         });
     });
 });

@@ -1,10 +1,10 @@
 'use strict';
 module.exports = function (waiterManager) {
-    function index(req, res) {
+    function index (req, res) {
         res.render('login');
     };
 
-    async function login(req, res) {
+    async function login (req, res) {
         let password = req.body.password;
         let user = req.body.username;
         user = user.trim();
@@ -33,7 +33,7 @@ module.exports = function (waiterManager) {
         };
     };
 
-    function adminLogin(req, res) {
+    function adminLogin (req, res) {
         res.render('login', {
             name: 'Admin'
         });
@@ -54,7 +54,7 @@ module.exports = function (waiterManager) {
         let user = req.params.username;
         let days = [];
         let type = typeof req.body.chkDay;
-    
+
         if (type === 'string') {
             days.push(req.body.chkDay);
         } else {
@@ -67,7 +67,7 @@ module.exports = function (waiterManager) {
             res.render('days', {
                 error: true,
                 name: user,
-                days: await waiterManager.returnWeekdayObject(),
+                days: await waiterManager.returnWeekdayObject()
             });
         } else if (days.length < 3) {
             waiterManager.setCorrectChosen(false);
@@ -76,7 +76,7 @@ module.exports = function (waiterManager) {
             res.render('days', {
                 error: true,
                 name: user,
-                days: await waiterManager.returnWeekdayObject(),
+                days: await waiterManager.returnWeekdayObject()
             });
         } else {
             waiterManager.setCorrectChosen(true);
@@ -85,7 +85,7 @@ module.exports = function (waiterManager) {
             res.render('days', {
                 error: false,
                 name: user,
-                days: await waiterManager.returnWeekdayObject(),
+                days: await waiterManager.returnWeekdayObject()
             });
         };
     };
@@ -110,15 +110,15 @@ module.exports = function (waiterManager) {
         let day = data[1];
         waiter = data[0].split(' ');
         waiter = waiter[0];
-    
+
         await waiterManager.removeWaiterFrom(waiter, day);
-    
+
         res.redirect('/admin');
     };
 
     async function loadSelection (req, res) {
         let user = req.params.username;
-    
+
         res.render('days', {
             name: user,
             days: await waiterManager.returnWeekdayObject()
@@ -135,5 +135,5 @@ module.exports = function (waiterManager) {
         back,
         deleteWaiter,
         loadSelection
-    }
+    };
 };

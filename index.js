@@ -5,8 +5,8 @@ const bodyParser = require('body-parser');
 const flash = require('express-flash');
 const session = require('express-session');
 const WaiterManager = require('./waiter-manager');
-const WaiterManangerRoutes = require ('./waiter-manager-routes');
-const Helpers = require ('./waiter-manager-helpers');
+const WaiterManangerRoutes = require('./waiter-manager-routes');
+const Helpers = require('./waiter-manager-helpers');
 
 const app = express();
 
@@ -66,7 +66,7 @@ app.post('/back', waiterManangerRoutes.back);
 app.post('/clear', waiterManangerRoutes.clear);
 app.post('/waiters/:username', waiterManangerRoutes.waitersUpdate);
 
-async function buildDBs() {
+async function buildDBs () {
     await waiterManager.buildWaiterTable();
     await waiterManager.buildShiftsTable();
 }

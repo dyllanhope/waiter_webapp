@@ -1,6 +1,5 @@
 'use strict';
-module.exports = function(waiterManager){
-    
+module.exports = function (waiterManager) {
     function isChecked (name, day) {
         let check = waiterManager.returnChosen();
         if (check) {
@@ -14,7 +13,7 @@ module.exports = function(waiterManager){
         } else {
             let list = waiterManager.returnTempDays();
             for (i = 0; i < list.length; i++) {
-                if (list[i] === day){
+                if (list[i] === day) {
                     return true;
                 };
             };
@@ -46,7 +45,7 @@ module.exports = function(waiterManager){
         return false;
     };
 
-    function isAdmin (){
+    function isAdmin () {
         let check = waiterManager.returnAdminMode();
         return check;
     };
@@ -55,5 +54,5 @@ module.exports = function(waiterManager){
         isChecked,
         isBooked,
         isAdmin
-    }
+    };
 };

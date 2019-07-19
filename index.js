@@ -71,7 +71,7 @@ async function buildDBs () {
     await waiterManager.buildShiftsTable();
 }
 
-const PORT = process.env.PORT || 3016;
+const PORT = process.env.PORT || 3017;
 
 app.listen(PORT, function () {
     console.log('app started at port: ' + PORT);

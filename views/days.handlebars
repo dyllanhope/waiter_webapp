@@ -5,13 +5,11 @@
         <h1>Waiter Shifts ({{name}})</h1>
     </div>
     <div class='col-md-4 text-center'>
-        <form action="/back" method="POST">
             {{#if (isAdmin)}}
-                <input type="submit" class='btnStyle' value="Back">
+                <a href="/back"><input type="submit" class='btnStyle' value="Back"></a>
             {{else}}
-                <input type="submit" class='btnStyle' value="Logout">                
+                <a href="/logout"><input type="submit" class='btnStyle' value="Logout"></a>            
             {{/if}}
-        </form>
     </div>
 </div>
 <div class='row'>

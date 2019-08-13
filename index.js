@@ -33,7 +33,8 @@ const helpers = Helpers(waiterManager);
 app.use(session({
     secret: 'yikes',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: { maxAge: 60000 }
 }));
 
 app.use(flash());
@@ -53,25 +54,42 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+const buildDBs = async () => {
+    await waiterManager.buildWaiterTable();
+    await waiterManager.buildShiftsTable();
+};
+
+const checkAdmin = (req, res, next) => {
+    if (req.session.username) {
+        if (req.session.username === 'Admin') {
+            return next();
+        } else {
+            return res.redirect('/waiters/' + req.session.username);
+        };
+    }
+    res.redirect('/');
+};
+const checkUser = (req, res, next) => {
+    if (req.session.username) {
+        return next();
+    }
+    res.redirect('/');
+};
+
 buildDBs();
 
 app.get('/', waiterManangerRoutes.index);
-app.get('/waiters/update/:username', waiterManangerRoutes.loadSelection);
-app.get('/waiters/:username', waiterManangerRoutes.loadSelection);
-app.get('/admin', waiterManangerRoutes.admin);
-app.get('/adminLogin', waiterManangerRoutes.adminLogin);
-app.post('/waiters/delete/:waiter', waiterManangerRoutes.deleteWaiter);
+app.get('/waiters/update/:username', checkAdmin, waiterManangerRoutes.loadSelection);
+app.get('/waiters/:username', checkUser, waiterManangerRoutes.loadSelection);
+app.get('/admin', checkAdmin, waiterManangerRoutes.admin);
+app.get('/back', checkAdmin, waiterManangerRoutes.back);
+app.get('/logout', checkUser, waiterManangerRoutes.logout);
+app.post('/waiters/delete/:waiter', checkAdmin, waiterManangerRoutes.deleteWaiter);
 app.post('/login', waiterManangerRoutes.login);
-app.post('/back', waiterManangerRoutes.back);
-app.post('/clear', waiterManangerRoutes.clear);
+app.post('/clear', checkAdmin, waiterManangerRoutes.clear);
 app.post('/waiters/:username', waiterManangerRoutes.waitersUpdate);
 
-async function buildDBs () {
-    await waiterManager.buildWaiterTable();
-    await waiterManager.buildShiftsTable();
-}
-
-const PORT = process.env.PORT || 3017;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, function () {
     console.log('app started at port: ' + PORT);

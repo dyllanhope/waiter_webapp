@@ -1,26 +1,42 @@
 'use strict';
-module.exports = function (waiterManager) {
-    function index (req, res) {
-        res.render('login');
+module.exports = (waiterManager) => {
+    const index = (req, res) => {
+        if (req.session.username) {
+            let user = req.session.username;
+            if (user === 'Admin') {
+                res.redirect('/admin');
+            } else {
+                res.redirect('/waiters/' + user);
+            }
+        } else {
+            res.render('login');
+        }
     };
 
-    async function login (req, res) {
+    const login = async (req, res) => {
         let password = req.body.password;
         let user = req.body.username;
-        user = user.trim();
-
-        if (user) {
-            let check = await waiterManager.checkLogin(user, password);
-            if (check) {
-                if (user === 'Admin') {
-                    waiterManager.setAdminMode(true);
-                    res.redirect('/admin');
+        if (password && user) {
+            user = user.trim();
+            if (user && !req.session.username) {
+                req.session.username = user;
+                let check = await waiterManager.checkLogin(user, password);
+                if (check) {
+                    if (user === 'Admin') {
+                        waiterManager.setAdminMode(true);
+                        res.redirect('/admin');
+                    } else {
+                        waiterManager.setAdminMode(false);
+                        res.redirect('/waiters/' + user);
+                    }
                 } else {
-                    waiterManager.setAdminMode(false);
-                    res.redirect('/waiters/' + user);
-                }
+                    req.flash('error', 'The username or password entered was incorrect');
+                    res.render('login', {
+                        name: user
+                    });
+                };
             } else {
-                req.flash('error', 'The username or password entered was incorrect');
+                req.flash('error', 'Please enter a username');
                 res.render('login', {
                     name: user
                 });
@@ -33,13 +49,13 @@ module.exports = function (waiterManager) {
         };
     };
 
-    function adminLogin (req, res) {
+    const adminLogin = (req, res) => {
         res.render('login', {
             name: 'Admin'
         });
-    }
+    };
 
-    async function admin (req, res) {
+    const admin = async (req, res) => {
         let workers = await waiterManager.findWaitersFor();
         let notWorking = await waiterManager.notWorking();
         res.render('admin', {
@@ -47,9 +63,9 @@ module.exports = function (waiterManager) {
             notWorking,
             workers
         });
-    }
+    };
 
-    async function waitersUpdate (req, res) {
+    const waitersUpdate = async (req, res) => {
         req.flash('confirm', '');
         let user = req.params.username;
         let days = [];
@@ -90,21 +106,22 @@ module.exports = function (waiterManager) {
         };
     };
 
-    async function clear (req, res) {
+    const clear = async (req, res) => {
         await waiterManager.clearShiftsTable();
         res.redirect('/admin');
     };
 
-    function back (req, res) {
-        if (waiterManager.returnAdminMode() === true) {
-            res.redirect('/admin');
-        } else {
-            waiterManager.tempDays([]);
-            res.redirect('/');
-        };
+    const back = (req, res) => {
+        res.redirect('/admin');
     };
 
-    async function deleteWaiter (req, res) {
+    const logout = (req, res) => {
+        delete req.session.username;
+        waiterManager.tempDays([]);
+        res.redirect('/');
+    };
+
+    const deleteWaiter = async (req, res) => {
         let waiter = req.params.waiter;
         let data = waiter.split('-');
         let day = data[1];
@@ -116,7 +133,7 @@ module.exports = function (waiterManager) {
         res.redirect('/admin');
     };
 
-    async function loadSelection (req, res) {
+    const loadSelection = async (req, res) => {
         let user = req.params.username;
 
         res.render('days', {
@@ -134,6 +151,7 @@ module.exports = function (waiterManager) {
         clear,
         back,
         deleteWaiter,
-        loadSelection
+        loadSelection,
+        logout
     };
 };
